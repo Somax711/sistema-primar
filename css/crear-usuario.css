@@ -1,0 +1,132 @@
+/* Estilos personalizados para crear usuario */
+.card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-header.bg-gradient-primary {
+    background: linear-gradient(135deg, rgb(19, 100, 137) 0%, rgb(19, 100, 137)100%);
+    border: none;
+    padding: 1.5rem;
+}
+
+.card-body {
+    background-color: #fafafa;
+}
+
+.form-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+.section-header h5 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.section-divider {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, rgb(19, 100, 137), transparent);
+    margin: 0.5rem 0 1rem 0;
+}
+
+.form-label {
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-control-modern {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+}
+
+.form-control-modern:focus {
+    border-color: rgb(19, 100, 137);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+    background-color: #ffffff;
+}
+
+.form-control-modern::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+}
+
+.btn-modern {
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    text-transform: none;
+}
+
+.btn-create {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-create:hover {
+    background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    color: white;
+}
+
+.btn-outline-secondary.btn-modern {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    background: white;
+}
+
+.btn-outline-secondary.btn-modern:hover {
+    background: #6c757d;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.text-danger.small {
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.form-text.text-muted {
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+.shadow {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .form-section {
+        padding: 1rem;
+    }
+    
+    .btn-block {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Iconos coloridos */
+.text-primary { color: rgb(19, 100, 137) !important; }
+.text-success { color: #28a745 !important; }
+.text-info { color: #17a2b8 !important; }

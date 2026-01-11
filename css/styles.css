@@ -1,0 +1,134 @@
+/* Estilos generales para el sistema */
+:root {
+    --primary-color: #21759b;
+    --primary-dark: #1a5f7a;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+/* Estilos para el contenedor principal */
+.container {
+    flex: 1 0 auto;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 0 20px 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+/* Estilos para el contenedor de usuario */
+.user {
+    display: flex;
+    width: 100%;
+    min-height: 480px;
+    max-width: 900px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    overflow: hidden;
+    margin-top: 32px;
+}
+
+/* Estilos para el formulario */
+.formBox {
+    flex: 1 1 340px;
+    max-width: 380px;
+    padding: 48px 32px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Estilos para la caja de imagen */
+.imageBox {
+    flex: 1 1 400px;
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #21759b;
+    color: #fff;
+    border-radius: 0 16px 16px 0;
+}
+
+/* Estilos para el logo */
+.top-logo {
+    position: relative;
+    bottom: auto;
+    width: 120px;
+    margin-bottom: 28px;
+    margin-top: -18px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Estilos para el formulario */
+form {
+    width: 100%;
+}
+
+form h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Estilos para mensajes de error */
+#error-message {
+    color: #ff0000;
+    background-color: #ffeeee;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    border-left: 4px solid #ff0000;
+    font-size: 14px;
+}
+
+/* Estilos para el footer */
+.footer-login {
+    flex-shrink: 0;
+    width: 100%;
+    text-align: center;
+    color: #676060;
+    font-size: 0.62rem;
+    padding: 1px 0 1px 0;
+    margin-top: 18px;
+    background: none;
+    box-shadow: none;
+}
+
+/* Estilos para HTML y body */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+} 
