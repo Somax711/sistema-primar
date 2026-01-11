@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico - Sistema de Rendiciones</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #4a5568;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .status-ok { border-left: 4px solid #48bb78; }
+        .status-error { border-left: 4px solid #f56565; }
+        .status-warning { border-left: 4px solid #ed8936; }
+        .btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background: #3182ce;
+        }
+        .btn-success {
+            background: #48bb78;
+        }
+        .btn-success:hover {
+            background: #38a169;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .info-item {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #4a5568;
+        }
+        .info-value {
+            margin-top: 5px;
+            color: #2d3748;
+        }
+        .action-buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .alert-success {
+            background: #c6f6d5;
+            border: 1px solid #9ae6b4;
+            color: #22543d;
+        }
+        .alert-error {
+            background: #fed7d7;
+            border: 1px solid #feb2b2;
+            color: #822727;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Diagnóstico del Sistema de Rendiciones</h1>
+        
+        <div class="status-card @(ViewBag.DatabaseConnection ? "status-ok" : "status-error")">
+            <h3>📊 Estado de la Base de Datos</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Conexión:</div>
+                    <div class="info-value">@(ViewBag.DatabaseConnection ? "✅ Conectado" : "❌ Sin conexión")</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Usuarios:</div>
+                    <div class="info-value">@ViewBag.UserCount usuarios encontrados</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Última verificación:</div>
+                    <div class="info-value">@ViewBag.Timestamp</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Estado:</div>
+                    <div class="info-value">
+                        @if (ViewBag.DatabaseConnection)
+                        {
+                            if (ViewBag.HasUsers)
+                            {
+                                <span style="color: #48bb78;">✅ Sistema listo</span>
+                            }
+                            else
+                            {
+                                <span style="color: #ed8936;">⚠️ Sin usuarios</span>
+                            }
+                        }
+                        else
+                        {
+                            <span style="color: #f56565;">❌ Error de conexión</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-error">
+                <strong>Error:</strong> @ViewBag.Error
+            </div>
+        }
+
+        @if (ViewBag.DatabaseConnection && !ViewBag.HasUsers)
+        {
+            <div class="status-card status-warning">
+                <h3>⚠️ Configuración Requerida</h3>
+                <p>La base de datos está conectada pero no hay usuarios registrados. Necesitas crear un usuario de prueba para comenzar.</p>
+                <button class="btn btn-success" onclick="createTestUser()">Crear Usuario de Prueba</button>
+            </div>
+        }
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Procesando...</p>
+        </div>
+
+        <div id="result"></div>
+
+        <div class="action-buttons">
+            <button class="btn" onclick="window.location.reload()">🔄 Actualizar</button>
+            <button class="btn" onclick="checkDiagnostic()">🔍 Diagnóstico Completo</button>
+            @if (ViewBag.DatabaseConnection && ViewBag.HasUsers)
+            {
+                <button class="btn btn-success" onclick="window.location.href='/Account/Login'">🚀 Ir al Login</button>
+            }
+        </div>
+
+        <div class="status-card">
+            <h3>🛠️ Herramientas de Diagnóstico</h3>
+            <p>URLs de prueba disponibles:</p>
+            <ul>
+                <li><a href="/api/diagnostic/health" target="_blank">Estado de salud del sistema</a></li>
+                <li><a href="/api/diagnostic/database" target="_blank">Información de la base de datos</a></li>
+                <li><a href="/api/diagnostic/routes" target="_blank">Rutas disponibles</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showResult(message, isSuccess = true) {
+            const result = document.getElementById('result');
+            result.innerHTML = `
+                <div class="alert ${isSuccess ? 'alert-success' : 'alert-error'}">
+                    ${message}
+                </div>
+            `;
+            
+            if (isSuccess) {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        }
+
+        async function createTestUser() {
+            showLoading();
+            
+            try {
+                const response = await fetch('/Startup/CreateTestData', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult(`
+                        <strong>✅ Usuario de prueba creado exitosamente!</strong><br>
+                        📧 Email: ${data.credentials.email}<br>
+                        🔐 Contraseña: ${data.credentials.password}<br>
+                        <em>Recargando página...</em>
+                    `);
+                } else {
+                    showResult(`❌ Error: ${data.message}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ Error de conexión: ${error.message}`, false);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function checkDiagnostic() {
+            showLoading();
+            
+            try {
+                const response = await fetch('/api/diagnostic/health');
+                const data = await response.json();
+                
+                let message = `
+                    <strong>📊 Diagnóstico Completo:</strong><br>
+                    🔗 Conexión BD: ${data.Database && data.Database.CanConnect ? '✅' : '❌'}<br>
+                    📧 Config Email: ${data.Configuration && data.Configuration.HasEmailConfig ? '✅' : '❌'}<br>
+                    🌍 Entorno: ${data.Configuration ? data.Configuration.Environment : 'N/A'}<br>
+                    🕒 Timestamp: ${data.Timestamp}
+                `;
+                
+                showResult(message);
+            } catch (error) {
+                showResult(`❌ Error en diagnóstico: ${error.message}`, false);
+            } finally {
+                hideLoading();
+            }
+        }
+    </script>
+</body>
+</html>

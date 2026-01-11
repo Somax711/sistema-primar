@@ -1,0 +1,810 @@
+@model IEnumerable<RendicionesPrimar.Models.Rendicion>
+@{
+    ViewData["Title"] = "Rendiciones";
+}
+
+<!-- Mensajes de TempData -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" style="margin-bottom: 20px; padding: 15px; border-radius: 8px; background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724;">
+        <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" style="margin-bottom: 20px; padding: 15px; border-radius: 8px; background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<style>
+    .rendiciones-header {
+        background: var(--primar-white);
+        border-radius: var(--primar-radius);
+        box-shadow: var(--primar-shadow);
+        padding: 32px;
+        margin-bottom: 32px;
+        border-left: 5px solid var(--primar-primary);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .rendiciones-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 200px;
+        height: 200px;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+        border-radius: 50%;
+        transform: translate(50%, -50%);
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    .header-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primar-text);
+        margin: 0;
+        background: var(--primar-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .rendiciones-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 24px;
+        margin-top: 24px;
+    }
+
+    .rendicion-card {
+        background: var(--primar-white);
+        border-radius: var(--primar-radius);
+        box-shadow: var(--primar-shadow);
+        padding: 24px;
+        border: 1px solid var(--primar-border);
+        transition: all 0.3s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .rendicion-card:hover {
+        box-shadow: var(--primar-shadow-hover);
+        transform: translateY(-4px);
+    }
+
+    .rendicion-card.removing {
+        transform: translateX(-100%) scale(0.9);
+        opacity: 0;
+        pointer-events: none;
+        margin: 0;
+        padding: 0;
+        height: 0;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .rendicion-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--primar-gradient);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+
+    .ticket-number {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primar-primary);
+        background: linear-gradient(135deg, var(--primar-primary) 0%, var(--primar-primary-light) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .card-status {
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 16px;
+        color: white;
+    }
+    .card-status.status-pendiente { background-color: var(--primar-warning); }
+    .card-status.status-aprobado_1 { background-color: var(--primar-info); }
+    .card-status.status-aprobado_2 { background-color: var(--primar-success); }
+    .card-status.status-rechazado { background-color: var(--primar-danger); }
+    .card-status.status-pagado { background: #334155; }
+
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primar-text);
+        margin: 12px 0;
+        line-height: 1.4;
+    }
+
+    .card-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: var(--primar-text-light);
+    }
+
+    .info-item i {
+        width: 16px;
+        color: var(--primar-primary);
+    }
+
+    .info-item strong {
+        color: var(--primar-text);
+        font-weight: 500;
+    }
+
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--primar-border);
+    }
+
+    .btn-detalle {
+        background: var(--primar-gradient);
+        color: white;
+        padding: 8px 20px;
+        border-radius: var(--primar-radius-sm);
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--primar-transition);
+    }
+
+    .btn-detalle:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--primar-shadow-hover);
+        text-decoration: none;
+        color: white;
+    }
+
+    .action-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+
+    .badge-requiere-aprobacion {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        color: #92400e;
+    }
+
+    .badge-listo-pagar {
+        background: linear-gradient(135deg, #d1fae5 0%, #6ee7b7 100%);
+        color: #065f46;
+    }
+
+    .empty-state {
+        background: var(--primar-white);
+        border-radius: var(--primar-radius);
+        box-shadow: var(--primar-shadow);
+        padding: 60px 40px;
+        text-align: center;
+        border: 2px dashed var(--primar-border);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--primar-text-light);
+        margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--primar-text);
+        margin-bottom: 12px;
+    }
+
+    .empty-state p {
+        color: var(--primar-text-light);
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    @@media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .header-actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        .rendiciones-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .rendicion-card {
+            padding: 20px;
+        }
+    }
+
+    @@keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-eliminar {
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+    }
+
+    .btn-eliminar:hover {
+        background: #dc2626;
+        transform: translateY(-1px);
+    }
+
+    .btn-eliminar:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+        opacity: 0.7;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(30,41,59,0.35);
+        backdrop-filter: blur(4px) brightness(0.9);
+        transition: background 0.3s;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 32px 28px 24px 28px;
+        border: none;
+        border-radius: 18px;
+        width: 95%;
+        max-width: 410px;
+        box-shadow: 0 8px 32px rgba(239,68,68,0.18);
+        position: relative;
+        animation: fadeInDown 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #fca5a5;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #ef4444;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .modal-title i {
+        color: #ef4444;
+        font-size: 1.5rem;
+    }
+
+    .close {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        line-height: 1;
+        margin-left: auto;
+        transition: color 0.2s;
+    }
+
+    .close:hover {
+        color: #ef4444;
+    }
+
+    .modal-body {
+        margin-bottom: 20px;
+        color: #991b1b;
+        font-size: 1.08rem;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .modal-body strong {
+        color: #ef4444;
+    }
+
+    .modal-body .fa-exclamation-triangle {
+        color: #ef4444;
+        margin-right: 6px;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn-cancelar {
+        background: #6b7280;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s;
+    }
+
+    .btn-confirmar {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-cancelar:hover {
+        background: #4b5563;
+    }
+
+    .btn-confirmar:hover {
+        background: #dc2626;
+    }
+
+    .btn-confirmar:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* Animación para mostrar estado vacío */
+    .fade-in-empty {
+        animation: fadeInUp 0.5s ease-out;
+    }
+</style>
+
+<!-- Header de Rendiciones -->
+<div class="rendiciones-header">
+    <div class="header-content">
+        <div>
+            <h1 class="header-title">
+                <i class="fas fa-file-invoice-dollar" style="margin-right: 12px;"></i>
+                Rendiciones
+            </h1>
+            <p style="color: var(--primar-text-light); margin: 8px 0 0 0; font-size: 1rem;">
+                @if (ViewBag.UserRole == "empleado")
+                {
+                    <text>Gestiona tus rendiciones de gastos</text>
+                }
+                else if (ViewBag.UserRole == "aprobador1")
+                {
+                    <text>Revisa y aprueba rendiciones pendientes</text>
+                }
+                else if (ViewBag.UserRole == "aprobador2")
+                {
+                    <text>Aprobación final de rendiciones</text>
+                }
+                else
+                {
+                    <text>Panel de administración de rendiciones</text>
+                }
+            </p>
+        </div>
+        
+        <div class="header-actions">
+            @if (ViewBag.UserRole == "empleado")
+            {
+                <a href="/Rendiciones/Crear" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Nueva Rendición
+                </a>
+            }
+            
+            <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">
+                <i class="fas fa-home"></i>
+                Inicio
+            </a>
+        </div>
+    </div>
+</div>
+
+<div id="contenidoRendiciones">
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="fas fa-folder-open"></i>
+            <h3>No hay rendiciones</h3>
+            <p>
+                @if (ViewBag.UserRole == "empleado")
+                {
+                    <text>Aún no has creado ninguna rendición. Comienza creando tu primera rendición de gastos.</text>
+                }
+                else
+                {
+                    <text>No hay rendiciones pendientes de revisión en este momento.</text>
+                }
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="rendiciones-grid fade-in-up" style="animation-delay: 0.2s;">
+            @foreach (var rendicion in Model)
+            {
+                <div class="rendicion-card" data-rendicion-id="@rendicion.Id">
+                    <div class="card-header">
+                        <div class="ticket-number">@rendicion.NumeroTicket</div>
+                        <span class="status-badge status-@rendicion.Estado.ToLower()">@rendicion.Estado.Replace("_", " ").ToUpper()</span>
+                    </div>
+                    
+                    <h3 class="card-title">@rendicion.Titulo</h3>
+                    
+                    <div class="card-info">
+                        @if (ViewBag.UserRole != "empleado")
+                        {
+                            <div class="info-item">
+                                <i class="fas fa-user"></i>
+                                <span>Empleado: <strong>@rendicion.Usuario.Nombre</strong></span>
+                            </div>
+                        }
+                        
+                        <div class="info-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Fecha: <strong>@rendicion.FechaCreacion.ToString("dd/MM/yyyy")</strong></span>
+                        </div>
+                        
+                        @if (rendicion.MontoTotal > 0)
+                        {
+                            <div class="info-item">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span>Monto: <strong>@rendicion.MontoTotal.ToString("C", new System.Globalization.CultureInfo("es-CL"))</strong></span>
+                            </div>
+                        }
+                        
+                        @if (rendicion.ArchivosAdjuntos.Any())
+                        {
+                            <div class="info-item">
+                                <i class="fas fa-paperclip"></i>
+                                <strong>Archivos:</strong> @rendicion.ArchivosAdjuntos.Count adjunto(s)
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <button type="button" class="btn-eliminar" onclick="confirmarEliminacion(@rendicion.Id, '@rendicion.NumeroTicket')" title="Eliminar rendición">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <a href="@Url.Action("Detalle", "Rendiciones", new { id = rendicion.Id })" class="btn-detalle">
+                            Ver Detalle <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@functions {
+    public string GetEstadoLabel(string estado)
+    {
+        return estado switch
+        {
+            "pendiente" => "Pendiente de Revisión",
+            "aprobado_1" => "Aprobado por Supervisor",
+            "aprobado_2" => "Aprobado por Gerente",
+            "pagado" => "Pagado",
+            "rechazado" => "Rechazado",
+            _ => estado
+        };
+    }
+}
+
+<!-- Modal de Confirmación -->
+<div id="modalEliminar" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-title"><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</span>
+            <span class="close" onclick="cerrarModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>¿Estás seguro de que deseas <strong>eliminar</strong> la rendición <strong id="ticketEliminar"></strong>?</p>
+            <p style="color: #ef4444; font-size: 1rem; margin-top: 10px; font-weight:600;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Esta acción <u>no se puede deshacer</u>. Todos los datos y archivos serán eliminados permanentemente.</span>
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+            <button type="button" class="btn-confirmar" onclick="eliminarRendicion()">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let rendicionIdAEliminar = null;
+
+function confirmarEliminacion(id, ticket) {
+    rendicionIdAEliminar = id;
+    document.getElementById('ticketEliminar').textContent = ticket;
+    document.getElementById('modalEliminar').style.display = 'block';
+    document.body.style.overflow = 'hidden'; // Evita scroll de fondo
+}
+
+function cerrarModal() {
+    document.getElementById('modalEliminar').style.display = 'none';
+    rendicionIdAEliminar = null;
+    document.body.style.overflow = '';
+    
+    // Restaurar botón si estaba deshabilitado
+    const btnConfirmar = document.querySelector('.btn-confirmar');
+    if (btnConfirmar) {
+        btnConfirmar.disabled = false;
+        btnConfirmar.innerHTML = 'Eliminar';
+    }
+}
+
+function eliminarRendicion() {
+    if (!rendicionIdAEliminar) return;
+    
+    // Mostrar indicador de carga en el botón
+    const btnConfirmar = document.querySelector('.btn-confirmar');
+    const textoOriginal = btnConfirmar.innerHTML;
+    btnConfirmar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
+    btnConfirmar.disabled = true;
+    
+    // Encontrar la card a eliminar
+    const cardElement = document.querySelector(`[data-rendicion-id="${rendicionIdAEliminar}"]`);
+    
+    fetch('@Url.Action("EliminarRendicion", "Rendiciones")', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'id=' + rendicionIdAEliminar
+    })
+    .then(async response => {
+        // Cerrar modal inmediatamente
+        cerrarModal();
+        
+        // Verificar si la respuesta es exitosa
+        if (response.ok) {
+            try {
+                const data = await response.json();
+                
+                if (data.success !== false) {
+                    // Éxito - eliminar visualmente la card
+                    if (cardElement) {
+                        // Animar la eliminación
+                        cardElement.classList.add('removing');
+                        
+                        setTimeout(() => {
+                            cardElement.remove();
+                            
+                            // Verificar si no quedan más cards
+                            const remainingCards = document.querySelectorAll('.rendicion-card:not(.removing)');
+                            if (remainingCards.length === 0) {
+                                // Mostrar estado vacío
+                                mostrarEstadoVacio();
+                            }
+                        }, 300); // Tiempo de la animación CSS
+                        
+                        // Mostrar mensaje de éxito si existe
+                        if (data.message) {
+                            mostrarMensajeExito(data.message);
+                        }
+                    } else {
+                        // Si no se encuentra la card, recargar página
+                        window.location.reload();
+                    }
+                } else {
+                    // Error del servidor - mostrar mensaje y recargar
+                    console.error('Error del servidor:', data.message);
+                    if (data.message) {
+                        mostrarMensajeError(data.message);
+                    }
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                }
+            } catch (e) {
+                // Si no es JSON válido, asumir éxito y recargar
+                console.log('Respuesta no JSON, recargando página...');
+                window.location.reload();
+            }
+        } else {
+            // Error HTTP - recargar página
+            console.error('Error HTTP:', response.status);
+            window.location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error de red:', error);
+        cerrarModal();
+        
+        // Mostrar mensaje de error
+        mostrarMensajeError('Error de conexión. Inténtalo nuevamente.');
+        
+        // Recargar después de un momento
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+    });
+}
+
+function mostrarEstadoVacio() {
+    const contenidoRendiciones = document.getElementById('contenidoRendiciones');
+    const userRole = '@ViewBag.UserRole';
+    
+    let mensajeVacio = '';
+    if (userRole === 'empleado') {
+        mensajeVacio = 'Aún no has creado ninguna rendición. Comienza creando tu primera rendición de gastos.';
+    } else {
+        mensajeVacio = 'No hay rendiciones pendientes de revisión en este momento.';
+    }
+    
+    contenidoRendiciones.innerHTML = `
+        <div class="empty-state fade-in-empty">
+            <i class="fas fa-folder-open"></i>
+            <h3>No hay rendiciones</h3>
+            <p>${mensajeVacio}</p>
+        </div>
+    `;
+}
+
+function mostrarMensajeExito(mensaje) {
+    // Buscar si ya existe un mensaje
+    let alertaExistente = document.querySelector('.alert-success');
+    if (alertaExistente) {
+        alertaExistente.remove();
+    }
+    
+    // Crear nuevo mensaje
+    const alertaDiv = document.createElement('div');
+    alertaDiv.className = 'alert alert-success';
+    alertaDiv.style.cssText = 'margin-bottom: 20px; padding: 15px; border-radius: 8px; background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; animation: fadeInUp 0.3s ease-out;';
+    alertaDiv.innerHTML = `<i class="fas fa-check-circle" style="margin-right: 8px;"></i>${mensaje}`;
+    
+    // Insertar al inicio del contenido
+    const header = document.querySelector('.rendiciones-header');
+    header.insertAdjacentElement('afterend', alertaDiv);
+    
+    // Auto-ocultar después de 5 segundos
+    setTimeout(() => {
+        if (alertaDiv.parentNode) {
+            alertaDiv.style.transition = 'all 0.3s ease-out';
+            alertaDiv.style.opacity = '0';
+            alertaDiv.style.transform = 'translateY(-20px)';
+            setTimeout(() => {
+                if (alertaDiv.parentNode) {
+                    alertaDiv.remove();
+                }
+            }, 300);
+        }
+    }, 5000);
+}
+
+function mostrarMensajeError(mensaje) {
+    // Buscar si ya existe un mensaje
+    let alertaExistente = document.querySelector('.alert-danger');
+    if (alertaExistente) {
+        alertaExistente.remove();
+    }
+    
+    // Crear nuevo mensaje
+    const alertaDiv = document.createElement('div');
+    alertaDiv.className = 'alert alert-danger';
+    alertaDiv.style.cssText = 'margin-bottom: 20px; padding: 15px; border-radius: 8px; background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; animation: fadeInUp 0.3s ease-out;';
+    alertaDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>${mensaje}`;
+    
+    // Insertar al inicio del contenido
+    const header = document.querySelector('.rendiciones-header');
+    header.insertAdjacentElement('afterend', alertaDiv);
+    
+    // Auto-ocultar después de 8 segundos
+    setTimeout(() => {
+        if (alertaDiv.parentNode) {
+            alertaDiv.style.transition = 'all 0.3s ease-out';
+            alertaDiv.style.opacity = '0';
+            alertaDiv.style.transform = 'translateY(-20px)';
+            setTimeout(() => {
+                if (alertaDiv.parentNode) {
+                    alertaDiv.remove();
+                }
+            }, 300);
+        }
+    }, 8000);
+}
+
+// Cerrar modal con tecla Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('modalEliminar');
+        if (modal.style.display === 'block') {
+            cerrarModal();
+        }
+    }
+});
+
+// Prevenir cierre accidental del modal
+window.onclick = function(event) {
+    var modal = document.getElementById('modalEliminar');
+    if (event.target == modal) {
+        // No cerrar automáticamente - solo con botones
+    }
+}
+</script>
+
+<footer style="text-align:center; color:#64748b; font-size:0.95rem; margin: 32px 0 12px 0; opacity:0.8; font-weight:500; background:transparent; padding:12px; border-radius:12px;">
+    Todos los derechos reservados
+</footer>

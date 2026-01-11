@@ -1,0 +1,205 @@
+@model RendicionesPrimar.Models.ViewModels.InformacionPersonalViewModel
+@{
+    ViewData["Title"] = "Mi Perfil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+.perfil-card {
+    max-width: 540px;
+    margin: 40px auto 0 auto;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(31,90,136,0.10);
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    padding: 0;
+}
+.perfil-header {
+    background: rgb(31, 90, 136);
+    color: #fff;
+    border-radius: 18px 18px 0 0;
+    padding: 32px 32px 18px 32px;
+    text-align: center;
+}
+.perfil-header .fa-user-edit {
+    font-size: 2.7rem;
+    margin-bottom: 8px;
+}
+.perfil-nombre {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    letter-spacing: 0.5px;
+}
+.perfil-rol {
+    font-size: 1.05rem;
+    color: #e0e7ef;
+    margin-bottom: 0;
+}
+.perfil-form {
+    padding: 32px 32px 24px 32px;
+}
+.perfil-form .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.perfil-form .form-group {
+    width: 100%;
+}
+.perfil-form .form-group label {
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 6px;
+}
+.perfil-form .form-control {
+    border-radius: 8px;
+    font-size: 1.08rem;
+    padding: 8px 12px;
+    margin-bottom: 0;
+    border: 1.5px solid #e2e8f0;
+    transition: border-color 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+}
+.perfil-form .form-control:focus {
+    border-color: rgb(31, 90, 136);
+    box-shadow: 0 0 0 2px #e0e7ef;
+}
+.perfil-form .btn-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+    justify-content: stretch;
+}
+.perfil-form .btn-primary, .perfil-form .btn-outline {
+    flex: 1 1 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    min-width: 0;
+    padding: 0 22px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 8px;
+    white-space: nowrap;
+    justify-content: center;
+}
+.perfil-form .btn-primary {
+    background: rgb(31, 90, 136);
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 8px rgba(31,90,136,0.07);
+    transition: background 0.18s;
+}
+.perfil-form .btn-primary:hover {
+    background: #23608e;
+}
+.perfil-form .btn-outline {
+    background: #fff;
+    color: rgb(31, 90, 136);
+    border: 2px solid rgb(31, 90, 136);
+    box-shadow: none;
+    transition: background 0.18s, color 0.18s;
+}
+.perfil-form .btn-outline:hover {
+    background: #f1f5f9;
+    color: #23608e;
+}
+@@media (max-width: 600px) {
+    .perfil-card, .perfil-form {
+        padding: 16px !important;
+    }
+    .perfil-header {
+        padding: 18px 8px 10px 8px;
+    }
+    .perfil-form .form-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .perfil-form .btn-row {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    .perfil-form .btn-primary, .perfil-form .btn-outline {
+        min-width: 0;
+        width: 100%;
+    }
+}
+    .footer-empty {
+        text-align: center;
+        color: #6b7280;
+        font-size: 1rem;
+        margin-top: 48px;
+        margin-bottom: 24px;
+        letter-spacing: 0.5px;
+    }
+</style>
+<div class="perfil-card">
+    <div class="perfil-header">
+        <i class="fas fa-user-edit"></i>
+        <div class="perfil-nombre">@Model.Nombre @Model.Apellidos</div>
+        <div class="perfil-rol">Supervisor</div>
+    </div>
+    <div class="perfil-form">
+        @if (TempData["SuccessMessage"] != null && (TempData["SuccessMessage"].ToString().ToLower().Contains("perfil") || TempData["SuccessMessage"].ToString().ToLower().Contains("cambio")))
+        {
+            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        }
+        <form asp-action="PerfilFijo" method="post" autocomplete="off">
+            @Html.AntiForgeryToken()
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Nombre">Nombre</label>
+                    <input asp-for="Nombre" class="form-control" placeholder="Nombre" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Apellidos">Apellido</label>
+                    <input asp-for="Apellidos" class="form-control" placeholder="Apellido" />
+                    <span asp-validation-for="Apellidos" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Rut">RUT</label>
+                    <input asp-for="Rut" class="form-control" placeholder="RUT" />
+                    <span asp-validation-for="Rut" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email">Correo electrónico</label>
+                    <input asp-for="Email" class="form-control" placeholder="Correo electrónico" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Telefono">Teléfono</label>
+                    <input asp-for="Telefono" class="form-control" placeholder="Teléfono" />
+                    <span asp-validation-for="Telefono" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Cargo">Cargo</label>
+                    <input asp-for="Cargo" class="form-control" placeholder="Cargo" />
+                    <span asp-validation-for="Cargo" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Departamento">Departamento</label>
+                    <input asp-for="Departamento" class="form-control" placeholder="Departamento" />
+                    <span asp-validation-for="Departamento" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="btn-row">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+                <a asp-controller="Account" asp-action="CambiarContrasenaSupervisor" class="btn btn-outline">
+                    <i class="fas fa-key"></i> Cambiar Contraseña
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="footer-empty">
+    Todos los derechos reservados
+</div>
+<div class="brand">
+    <img src="~/images/primarlogo.png" alt="Primar Logo" style="height:38px; width:auto; display:block;" />
+</div> 

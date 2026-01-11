@@ -1,0 +1,893 @@
+@model IEnumerable<RendicionesPrimar.Models.Rendicion>
+@{
+    ViewData["Title"] = "Rendiciones Pendientes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    :root {
+        --primary-blue: #215c8e;
+        --primary-blue-light: #357ab7;
+        --primary-blue-dark: #1a4b73;
+        --accent-teal: #215c8e;
+        --accent-teal-light: #357ab7;
+        --success-green: #059669;
+        --success-green-light: #10b981;
+        --warning-orange: #d97706;
+        --warning-orange-light: #f59e0b;
+        --danger-red: #dc2626;
+        --danger-red-light: #ef4444;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --white: #ffffff;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --radius-sm: 6px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+        --radius-xl: 16px;
+        --radius-2xl: 20px;
+        --gradient-primary: linear-gradient(135deg, #215c8e 0%, #357ab7 100%);
+        --gradient-accent: linear-gradient(135deg, #215c8e 0%, #357ab7 100%);
+        --gradient-success: linear-gradient(135deg, var(--success-green) 0%, var(--success-green-light) 100%);
+        --gradient-warning: linear-gradient(135deg, var(--warning-orange) 0%, var(--warning-orange-light) 100%);
+        --gradient-danger: linear-gradient(135deg, var(--danger-red) 0%, var(--danger-red-light) 100%);
+        --gradient-background: linear-gradient(135deg, var(--gray-50) 0%, #f1f5f9 100%);
+    }
+
+    body {
+        background: var(--gradient-background);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        color: var(--gray-800);
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 32px 24px;
+    }
+
+    /* Header premium como supervisor */
+    .notifications-header {
+        background: var(--white);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        padding: 48px;
+        margin-bottom: 40px;
+        border: 1px solid var(--gray-200);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .notifications-header::before {
+        content: '';
+        position: absolute;
+        top: -60%;
+        right: -30%;
+        width: 400px;
+        height: 400px;
+        background: var(--gradient-primary);
+        border-radius: 50%;
+        opacity: 0.06;
+        transform: rotate(25deg);
+    }
+
+    .notifications-header::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -20%;
+        width: 200px;
+        height: 200px;
+        background: var(--gradient-accent);
+        border-radius: 50%;
+        opacity: 0.04;
+        transform: rotate(-45deg);
+    }
+
+    .notifications-header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0 0 16px 0;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .notifications-header h1 i {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2.6rem;
+        animation: clockSpin 4s ease-in-out infinite;
+    }
+
+    @@keyframes clockSpin {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(15deg); }
+        75% { transform: rotate(-15deg); }
+    }
+
+    .notifications-header p {
+        color: var(--gray-600);
+        margin: 0;
+        font-size: 1.3rem;
+        position: relative;
+        z-index: 1;
+        font-weight: 500;
+        opacity: 0.9;
+    }
+
+    /* Empty state premium */
+    .empty-state {
+        background: var(--white);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        padding: 100px 32px;
+        text-align: center;
+        color: var(--gray-500);
+        position: relative;
+        overflow: hidden;
+        border: 2px dashed var(--gray-200);
+        margin-top: 32px;
+    }
+
+    .empty-state::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: 50%;
+        width: 300px;
+        height: 300px;
+        background: var(--gradient-primary);
+        border-radius: 50%;
+        opacity: 0.03;
+        transform: translate(-50%, -50%);
+    }
+
+    .empty-state i {
+        font-size: 5rem;
+        color: var(--gray-300);
+        margin-bottom: 24px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .empty-state h3 {
+        font-size: 1.8rem;
+        margin-bottom: 16px;
+        color: var(--gray-700);
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+
+    .empty-state p {
+        font-size: 1.2rem;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        font-weight: 500;
+    }
+
+    /* Tabla premium */
+    .card-table {
+        background: var(--white);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        padding: 0;
+        margin-bottom: 40px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .card-table::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-primary);
+        z-index: 1;
+    }
+
+    .table-rendiciones {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+        background: var(--white);
+        margin: 0;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+
+    .table-rendiciones thead th {
+        background: var(--gray-100);
+        color: var(--gray-700);
+        font-weight: 600;
+        padding: 20px 16px;
+        border: none;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+
+    .table-rendiciones thead th i {
+        color: var(--primary-blue);
+        margin-right: 8px;
+        font-size: 1rem;
+    }
+
+    .table-rendiciones tbody td {
+        background: var(--white);
+        padding: 20px 16px;
+        border-bottom: 1px solid var(--gray-200);
+        font-size: 0.95rem;
+        color: var(--gray-700);
+        vertical-align: middle;
+        text-align: center;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .table-rendiciones tbody tr:hover td {
+        background: var(--gray-50);
+        transform: scale(1.01);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .table-rendiciones tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Elementos de tabla mejorados */
+    .badge-ticket {
+        background: var(--gradient-primary);
+        color: var(--white);
+        font-weight: 600;
+        border-radius: var(--radius-md);
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        display: inline-block;
+        font-family: 'Courier New', monospace;
+        box-shadow: var(--shadow-sm);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-monto {
+        background: var(--gradient-success);
+        color: var(--white);
+        font-weight: 700;
+        border-radius: var(--radius-md);
+        padding: 8px 16px;
+        font-size: 1rem;
+        display: inline-block;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .badge-estado {
+        background: var(--gradient-warning);
+        color: var(--white);
+        font-weight: 600;
+        border-radius: var(--radius-md);
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: var(--shadow-sm);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-estado i {
+        font-size: 0.8rem;
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.6; transform: scale(1.2); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    .btn-ver-detalle {
+        background: var(--gradient-primary);
+        color: var(--white);
+        font-weight: 600;
+        border-radius: var(--radius-md);
+        padding: 12px 20px;
+        font-size: 0.95rem;
+        border: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-ver-detalle::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: all 0.3s ease;
+    }
+
+    .btn-ver-detalle:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-ver-detalle:hover {
+        background: var(--primary-blue-dark);
+        color: var(--white);
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-ver-detalle i {
+        font-size: 0.9rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .employee-cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-weight: 600;
+    }
+
+    .employee-cell i {
+        color: var(--primary-blue);
+        font-size: 1rem;
+        padding: 8px;
+        background: rgba(33, 92, 142, 0.1);
+        border-radius: 50%;
+    }
+
+    .date-cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-weight: 500;
+    }
+
+    .date-cell i {
+        color: var(--primary-blue);
+        font-size: 0.9rem;
+    }
+
+    .title-cell {
+        text-align: left !important;
+        max-width: 300px;
+    }
+
+    .title-main {
+        font-weight: 700;
+        color: var(--gray-800);
+        font-size: 1.1rem;
+        margin-bottom: 6px;
+        line-height: 1.3;
+    }
+
+    .title-description {
+        color: var(--gray-500);
+        font-size: 0.9rem;
+        font-weight: 400;
+        line-height: 1.4;
+        opacity: 0.8;
+    }
+
+    /* Modal premium */
+    .modal.fade {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.6);
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+    }
+
+    .modal.fade.show {
+        display: flex !important;
+    }
+
+    .modal-dialog {
+        max-width: 500px;
+        margin: auto;
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        background: none;
+        animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @@keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .modal-content {
+        background: var(--white);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        border: 1px solid var(--gray-200);
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 28px 32px 20px 32px;
+        border-bottom: 1px solid var(--gray-200);
+        background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+    }
+
+    .modal-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin: 0;
+    }
+
+    .close {
+        background: var(--gray-100);
+        border: none;
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--gray-500);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .close:hover {
+        background: var(--gray-200);
+        color: var(--danger-red);
+        transform: rotate(90deg);
+    }
+
+    .modal-body {
+        padding: 28px 32px;
+        color: var(--gray-700);
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    .modal-body p {
+        margin: 0 0 20px 0;
+    }
+
+    .alert-warning {
+        color: var(--danger-red);
+        background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 100%);
+        font-size: 1rem;
+        margin: 20px 0 0 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+        padding: 16px 20px;
+        border-radius: var(--radius-lg);
+        border: 1px solid #fecaca;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .modal-footer {
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+        padding: 20px 32px 28px 32px;
+        background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+        border-top: 1px solid var(--gray-200);
+    }
+
+    .btn.btn-secondary,
+    .btn.btn-danger {
+        border-radius: var(--radius-lg);
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 14px 28px;
+        min-width: 140px;
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn.btn-secondary {
+        background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+        color: var(--gray-700);
+        border: 1px solid var(--gray-300);
+    }
+
+    .btn.btn-secondary:hover {
+        background: linear-gradient(135deg, var(--gray-200) 0%, var(--gray-300) 100%);
+        color: var(--gray-800);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn.btn-danger {
+        background: var(--gradient-danger);
+        color: var(--white);
+    }
+
+    .btn.btn-danger:hover {
+        background: var(--danger-red);
+        color: var(--white);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* Animaciones premium */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .notifications-header {
+        animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card-table,
+    .empty-state {
+        animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        animation-delay: 0.2s;
+        animation-fill-mode: both;
+    }
+
+    .table-rendiciones tbody tr {
+        animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .table-rendiciones tbody tr:nth-child(1) { animation-delay: 0.1s; }
+    .table-rendiciones tbody tr:nth-child(2) { animation-delay: 0.2s; }
+    .table-rendiciones tbody tr:nth-child(3) { animation-delay: 0.3s; }
+    .table-rendiciones tbody tr:nth-child(4) { animation-delay: 0.4s; }
+    .table-rendiciones tbody tr:nth-child(5) { animation-delay: 0.5s; }
+
+    /* Responsive Design */
+    @@media (max-width: 1200px) {
+        .container {
+            padding: 24px 16px;
+        }
+
+        .notifications-header {
+            padding: 36px 32px;
+        }
+
+        .notifications-header h1 {
+            font-size: 2.5rem;
+        }
+
+        .table-rendiciones thead th,
+        .table-rendiciones tbody td {
+            padding: 16px 12px;
+            font-size: 0.9rem;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .container {
+            padding: 16px 12px;
+        }
+
+        .notifications-header {
+            padding: 28px 24px;
+        }
+
+        .notifications-header h1 {
+            font-size: 2rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .notifications-header h1 i {
+            font-size: 1.8rem;
+        }
+
+        .notifications-header p {
+            font-size: 1.1rem;
+        }
+
+        .empty-state {
+            padding: 80px 24px;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.6rem;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        .card-table {
+            overflow-x: auto;
+        }
+
+        .table-rendiciones {
+            min-width: 800px;
+        }
+
+        .table-rendiciones thead th,
+        .table-rendiciones tbody td {
+            padding: 12px 8px;
+            font-size: 0.85rem;
+        }
+
+        .title-cell {
+            max-width: 200px;
+        }
+
+        .modal-dialog {
+            margin: 20px;
+            max-width: calc(100% - 40px);
+        }
+
+        .modal-header,
+        .modal-body,
+        .modal-footer {
+            padding: 20px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .notifications-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .table-rendiciones {
+            min-width: 700px;
+        }
+
+        .table-rendiciones thead th,
+        .table-rendiciones tbody td {
+            padding: 10px 6px;
+            font-size: 0.8rem;
+        }
+
+        .title-cell {
+            max-width: 150px;
+        }
+
+        .btn.btn-secondary,
+        .btn.btn-danger {
+            padding: 12px 24px;
+            font-size: 0.9rem;
+            min-width: 120px;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="notifications-header">
+        <h1>
+            <i class="fas fa-clock"></i>
+            Rendiciones Pendientes de Aprobación
+        </h1>
+        <p>Gestiona y revisa todas las rendiciones que requieren tu aprobación</p>
+    </div>
+    
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="fas fa-clipboard-check"></i>
+            <h3>¡Excelente trabajo!</h3>
+            <p>No hay rendiciones pendientes de aprobación final en este momento.<br>
+            Todas las solicitudes están al día. ¡Disfruta tu día productivo!</p>
+        </div>
+    }
+    else
+    {
+        <div class="card-table">
+            <table class="table-rendiciones">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-ticket-alt"></i> Ticket</th>
+                        <th><i class="fas fa-user"></i> Empleado</th>
+                        <th><i class="fas fa-file-alt"></i> Título</th>
+                        <th><i class="fas fa-dollar-sign"></i> Monto</th>
+                        <th><i class="fas fa-calendar-alt"></i> Fecha</th>
+                        <th><i class="fas fa-info-circle"></i> Estado</th>
+                        <th><i class="fas fa-cogs"></i> Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var rendicion in Model)
+                {
+                    <tr>
+                        <td>
+                            <span class="badge-ticket">@rendicion.NumeroTicket</span>
+                        </td>
+                        <td>
+                            <div class="employee-cell">
+                                <i class="fas fa-user"></i>
+                                @rendicion.Usuario?.Nombre
+                            </div>
+                        </td>
+                        <td class="title-cell">
+                            <div class="title-main">@rendicion.Titulo</div>
+                            <div class="title-description">@rendicion.Descripcion</div>
+                        </td>
+                        <td>
+                            <span class="badge-monto">$@rendicion.MontoTotal.ToString("N0")</span>
+                        </td>
+                        <td>
+                            <div class="date-cell">
+                                <i class="fas fa-calendar"></i>
+                                @rendicion.FechaCreacion.ToString("dd-MM-yyyy")
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge-estado">
+                                <i class="fas fa-clock"></i>
+                                Pendiente
+                            </span>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Detalle", "Rendiciones", new { id = rendicion.Id })" class="btn-ver-detalle">
+                                <i class="fas fa-eye"></i>
+                                Ver Detalle
+                            </a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <!-- Scripts preservados -->
+}
+
+<!-- Modal de Confirmación -->
+<div id="modalEliminar" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="close" onclick="cerrarModal()">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar la rendición <strong id="ticketEliminar"></strong>?</p>
+                <div class="alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Esta acción no se puede deshacer.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="eliminarRendicion()">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let rendicionIdAEliminar = null;
+
+function confirmarEliminacion(id, ticket) {
+    rendicionIdAEliminar = id;
+    document.getElementById('ticketEliminar').textContent = ticket;
+    $('#modalEliminar').modal('show');
+}
+
+function cerrarModal() {
+    $('#modalEliminar').modal('hide');
+    rendicionIdAEliminar = null;
+}
+
+function eliminarRendicion() {
+    if (!rendicionIdAEliminar) return;
+
+    fetch('@Url.Action("EliminarRendicion", "Rendiciones")', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'id=' + rendicionIdAEliminar
+    })
+    .then(async response => {
+        let data;
+        try {
+            data = await response.json();
+        } catch (e) {
+            $('#modalEliminar').modal('hide');
+            // No mostrar ningún alert de error inesperado
+            return;
+        }
+        $('#modalEliminar').modal('hide');
+        if (data.success) {
+            alert(data.message);
+            window.location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        $('#modalEliminar').modal('hide');
+        alert('Error al eliminar la rendición: ' + error.message);
+    });
+}
+
+// Cerrar modal al hacer clic fuera de él
+window.onclick = function(event) {
+    var modal = document.getElementById('modalEliminar');
+    if (event.target == modal) {
+        cerrarModal();
+    }
+}
+</script>

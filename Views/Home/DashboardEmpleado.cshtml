@@ -1,0 +1,561 @@
+@model RendicionesPrimar.Models.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Mi Portal";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Contenido principal -->
+<main class="main">
+    <div class="container">
+        
+        <!-- Header del dashboard -->
+        <div class="dashboard-header" style="position:relative;overflow:hidden;min-height:120px;">
+            <!-- Salmones animados como fondo decorativo detrás de TODO el contenido -->
+            <div class="salmon-container" id="salmonContainer" style="position:absolute;left:0;top:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:hidden;"></div>
+            <div style="position:relative;z-index:2;width:100%;height:100%;padding:32px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;">
+                <div class="welcome-section" style="text-align:left;flex-grow:1;min-width:260px;">
+                    <h1>¡Hola, @User.Identity.Name!</h1>
+                    <span style="display:inline-block;margin-bottom:8px;padding:2px 12px;border-radius:12px;background:#e0f2fe;color:#0284c7;font-weight:600;font-size:1rem;letter-spacing:0.5px;vertical-align:middle;">
+                        @(User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value?.ToUpperInvariant() ?? "SIN ROL")
+                    </span>
+                    <p>Bienvenido a tu panel de control personal</p>
+                    <p style="color:#64748b;font-weight:600;">@DateTime.Now.ToString("dddd, dd MMMM yyyy", new System.Globalization.CultureInfo("es-ES"))</p>
+                </div>
+                <a href="@Url.Action("Crear", "Rendiciones")" class="btn btn-primary" style="font-size:1rem;padding:10px 28px;border-radius:10px;display:flex;align-items:center;gap:8px;">
+                    <i class="fas fa-plus"></i> Nueva Rendición
+                </a>
+            </div>
+        </div>
+
+        <!-- Resumen de mis rendiciones -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <div class="summary-content">
+                    <h3>@(Model?.TotalRendiciones ?? 0)</h3>
+                    <p>Total de Rendiciones</p>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-icon pending">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="summary-content">
+                    <h3>@(Model?.RendicionesPendientes ?? 0)</h3>
+                    <p>Pendientes</p>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-icon approved">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="summary-content">
+                    <h3>@(Model?.RendicionesAprobadas ?? 0)</h3>
+                    <p>Aprobadas</p>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-icon rejected">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="summary-content">
+                    <h3>@(Model?.RendicionesRechazadas ?? 0)</h3>
+                    <p>Rechazadas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones rápidas -->
+        <div class="actions-section">
+            <h2>Acciones Rápidas</h2>
+            <div class="actions-grid">
+                <a href="@Url.Action("Crear", "Rendiciones")" class="action-card primary">
+                    <div class="action-icon">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Crear Rendición</h3>
+                        <p>Solicitar reembolso de gastos</p>
+                    </div>
+                </a>
+
+                <a href="@Url.Action("MisRendiciones", "Empleados")" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-list-alt"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Ver Mis Rendiciones</h3>
+                        <p>Revisar estado de solicitudes</p>
+                    </div>
+                </a>
+
+                <a href="@Url.Action("Ayuda", "Empleados")" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Ayuda</h3>
+                        <p>Guías y soporte de la plataforma</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Actividad reciente -->
+        @if (Model?.UltimasRendiciones != null && Model.UltimasRendiciones.Any())
+        {
+            <div class="recent-section">
+                <h2>Actividad Reciente</h2>
+                <div class="recent-list">
+                    @foreach (var rendicion in Model.UltimasRendiciones)
+                    {
+                        <a href="@Url.Action("Detalle", "Rendiciones", new { id = rendicion.Id })" class="recent-item">
+                            <div class="recent-icon @(rendicion.Estado.ToLower())">
+                                @if (rendicion.Estado == "Aprobada") { <i class="fas fa-check"></i> }
+                                else if (rendicion.Estado == "Rechazada") { <i class="fas fa-times"></i> }
+                                else if (rendicion.Estado == "Pendiente") { <i class="fas fa-clock"></i> }
+                                else { <i class="fas fa-file-invoice"></i> }
+                            </div>
+                            <div class="recent-content">
+                                <strong>Rendición #@rendicion.Id: @rendicion.Titulo</strong>
+                                <span class="status-badge @rendicion.Estado.ToLower()" style="font-size:1.1em;font-weight:600;">@rendicion.EstadoLegible</span>
+                            </div>
+                            <div class="recent-date">
+                                @rendicion.FechaCreacion.ToString("dd MMM yyyy")
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <h3>No tienes rendiciones aún</h3>
+                <p>Crea tu primera rendición para comenzar</p>
+                <a href="@Url.Action("Crear", "Rendiciones")" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Crear Primera Rendición
+                </a>
+            </div>
+        }
+
+    </div>
+</main>
+
+<footer style="text-align:center; color:#64748b; font-size:0.95rem; margin: 32px 0 12px 0; opacity:0.8; font-weight:500; background:transparent; padding:12px; border-radius:12px;">
+    Todos los derechos reservados
+</footer>
+@section Styles {
+<style>
+/* Variables específicas del Dashboard que no están en _Layout */
+:root {
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+}
+
+/* Main content */
+.main {
+    flex: 1;
+    padding: 40px 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Dashboard header */
+.dashboard-header {
+    margin-bottom: 40px;
+    background: var(--primar-white);
+    border-radius: var(--primar-radius);
+    box-shadow: var(--primar-shadow);
+    border: 1px solid var(--primar-border);
+}
+
+.welcome-section h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primar-text);
+    margin-bottom: 8px;
+}
+
+.welcome-section p {
+    font-size: 1.1rem;
+    color: var(--primar-text-light);
+    margin-bottom: 8px;
+}
+
+/* Summary grid */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.summary-card {
+    background: var(--primar-white);
+    border-radius: var(--primar-radius);
+    padding: 24px;
+    box-shadow: var(--primar-shadow);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: var(--primar-transition);
+    border: 1px solid var(--primar-border);
+}
+
+.summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--primar-shadow-hover);
+}
+
+.summary-icon {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primar-primary);
+}
+
+.summary-icon.pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.summary-icon.approved {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.summary-icon.rejected {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+}
+
+.summary-content h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--primar-text);
+    margin-bottom: 0;
+    line-height: 1.1;
+}
+
+.summary-content p {
+    font-size: 0.95rem;
+    color: var(--primar-text-light);
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Actions */
+.actions-section {
+    margin-bottom: 40px;
+}
+
+.actions-section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primar-text);
+    margin-bottom: 24px;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.action-card {
+    background: var(--primar-white);
+    border: 1px solid var(--primar-border);
+    border-radius: var(--primar-radius);
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: var(--primar-transition);
+}
+
+.action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--primar-shadow-hover);
+    text-decoration: none;
+    color: inherit;
+    border-color: var(--primar-primary);
+}
+
+.action-card.primary {
+    background: var(--primar-primary);
+    color: white;
+    border-color: var(--primar-primary);
+}
+.action-card.primary .action-icon {
+     background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+.action-card.primary:hover {
+    filter: brightness(110%);
+}
+.action-card.primary h3, .action-card.primary p {
+    color: white;
+}
+
+.action-icon {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: var(--primar-radius-sm);
+    background: var(--primar-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primar-primary);
+    font-size: 1.5rem;
+}
+
+.action-content h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--primar-text);
+}
+
+.action-content p {
+    font-size: 0.9rem;
+    color: var(--primar-text-light);
+    margin: 0;
+}
+
+/* Recent section */
+.recent-section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primar-text);
+    margin-bottom: 24px;
+}
+
+.recent-list {
+    background: var(--primar-white);
+    border-radius: var(--primar-radius);
+    box-shadow: var(--primar-shadow);
+    overflow: hidden;
+    border: 1px solid var(--primar-border);
+}
+
+.recent-item {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--primar-border);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: var(--primar-transition);
+    text-decoration: none;
+    color: inherit;
+}
+
+.recent-item:last-child {
+    border-bottom: none;
+}
+
+.recent-item:hover {
+    background: var(--primar-background);
+}
+
+.recent-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primar-white);
+    font-size: 1rem;
+}
+.recent-icon.pendiente { background-color: var(--warning); }
+.recent-icon.aprobada { background-color: var(--success); }
+.recent-icon.rechazada { background-color: var(--danger); }
+.recent-icon.borrador { background-color: var(--primar-text-light); }
+
+
+.recent-content {
+    flex-grow: 1;
+}
+
+.recent-content strong {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primar-text);
+}
+.recent-content p {
+    font-size: 0.9rem;
+    color: var(--primar-text-light);
+    margin: 0;
+}
+
+.recent-date {
+    font-size: 0.9rem;
+    color: var(--primar-text-light);
+    font-weight: 500;
+    min-width: 80px;
+    text-align: right;
+}
+
+.status-badge {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+}
+.status-badge.pendiente { background-color: var(--warning); }
+.status-badge.aprobada { background-color: var(--success); }
+.status-badge.rechazada { background-color: var(--danger); }
+.status-badge.borrador { background-color: var(--primar-text-light); color: var(--primar-white); }
+
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 60px 24px;
+    background: var(--primar-white);
+    border-radius: var(--primar-radius);
+    box-shadow: var(--primar-shadow);
+    border: 1px solid var(--primar-border);
+}
+
+.empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--primar-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primar-text-light);
+    font-size: 2.5rem;
+    margin: 0 auto 24px;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primar-text);
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    font-size: 1rem;
+    color: var(--primar-text-light);
+    margin-bottom: 24px;
+}
+
+/* Responsive */
+@@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        gap: 24px;
+        text-align: center;
+    }
+    
+    .summary-grid, .actions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.salmon-container {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    z-index: 1;
+    border-bottom: 2px solid #e2e8f0;
+}
+.salmon {
+    position: absolute;
+    left: -120px;
+    width: 120px;
+    height: 48px;
+    opacity: 0.35;
+    filter: blur(0.5px) drop-shadow(0 2px 4px rgba(0,0,0,0.10));
+    pointer-events: none;
+    z-index: 1;
+}
+.salmon svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+.salmon-tail {
+    animation: tailWiggle 2s ease-in-out infinite;
+    transform-origin: 35px 20px;
+}
+@@keyframes swimSalmon {
+    0% { left: -120px; opacity: 0; }
+    10% { opacity: 0.35; }
+    90% { opacity: 0.35; }
+    100% { left: 100%; opacity: 0; }
+}
+@@keyframes tailWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-5deg); }
+}
+</style>
+}
+
+@section Scripts {
+<script>
+    function createSalmon() {
+        const container = document.getElementById('salmonContainer');
+        if (!container) return;
+        const salmon = document.createElement('div');
+        salmon.className = 'salmon';
+        salmon.style.left = '-120px'; // Asegura que siempre parte fuera
+        const headerHeight = container.offsetHeight;
+        const topPosition = Math.random() * (headerHeight - 48);
+        salmon.style.top = topPosition + 'px';
+        const duration = Math.random() * 10 + 12; // 12-22s
+        salmon.style.animation = `swimSalmon ${duration}s linear forwards`;
+        salmon.innerHTML = `
+            <svg viewBox="0 0 120 48" width="120" height="48">
+                <path d="M35,20 Q55,5 85,15 Q95,20 85,25 Q55,35 35,20" fill="#fa8072" stroke="#e26d60" stroke-width="1"/>
+                <path class="salmon-tail" d="M35,20 Q25,10 15,20 Q25,30 35,20" fill="#fa8072" stroke="#e26d60" stroke-width="1"/>
+                <circle cx="80" cy="18" r="3" fill="black" />
+                <path d="M70,15 Q69,20 70,25" stroke="#e26d60" stroke-width="1.5" fill="none" />
+            </svg>
+        `;
+        container.appendChild(salmon);
+        setTimeout(() => { if (salmon.parentNode) salmon.parentNode.removeChild(salmon); }, (duration + 2) * 1000);
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Un pequeño retraso para asegurar que el contenedor exista
+        setTimeout(() => {
+            setInterval(createSalmon, 5000);
+            // Lanzar algunos al inicio
+            createSalmon();
+            setTimeout(createSalmon, 2500);
+        }, 500);
+    });
+</script>
+} 

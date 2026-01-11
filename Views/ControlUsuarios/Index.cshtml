@@ -1,0 +1,1087 @@
+@model IEnumerable<RendicionesPrimar.Models.Usuario>
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Gestión de Usuarios";
+    Layout = "_Layout";
+    var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "(sin rol)";
+    var userRoleDisplay = userRole switch {
+        "aprobador1" => "Supervisor",
+        "aprobador2" => "Gerente",
+        "empleado" => "Empleado",
+        _ => userRole
+    };
+}
+
+<style>
+    :root {
+        --primary-blue: #2a5d8a;
+        --primary-blue-light: #2a5d8a;
+        --primary-blue-dark: #2a5d8a;
+        --accent-teal: #2a5d8a;
+        --accent-teal-light: #2a5d8a;
+        --success-green: #059669;
+        --success-green-light: #10b981;
+        --warning-orange: #d97706;
+        --danger-red: #dc2626;
+        --danger-red-light: #ef4444;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --white: #ffffff;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --radius-sm: 6px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+        --radius-xl: 16px;
+        --radius-2xl: 20px;
+        --gradient-primary: linear-gradient(135deg, #2a5d8a 0%, #2a5d8a 100%);
+        --gradient-accent: linear-gradient(135deg, #2a5d8a 0%, #2a5d8a 100%);
+        --gradient-success: linear-gradient(135deg, var(--success-green) 0%, var(--success-green-light) 100%);
+        --gradient-danger: linear-gradient(135deg, var(--danger-red) 0%, var(--danger-red-light) 100%);
+    }
+
+    body {
+        background: var(--gray-50);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        color: var(--gray-800);
+    }
+
+    .users-management-simple {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 32px;
+        background: var(--gray-50);
+        min-height: 100vh;
+    }
+
+    .page-header-simple {
+        background: var(--white);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-lg);
+        padding: 32px;
+        margin-bottom: 32px;
+        border: 1px solid var(--gray-200);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-header-simple::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -25%;
+        width: 300px;
+        height: 300px;
+        background: var(--gradient-primary);
+        border-radius: 50%;
+        opacity: 0.08;
+        transform: rotate(45deg);
+    }
+
+    .page-header-simple h1 {
+        margin: 0;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .page-header-simple h1::before {
+        content: '\f0c0';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        color: var(--accent-teal);
+        font-size: 2rem;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 24px;
+        border: none;
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary {
+        background: var(--gradient-primary);
+        color: var(--white);
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-blue-dark);
+        color: var(--white);
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border: 1px solid var(--gray-300);
+    }
+
+    .btn-secondary:hover {
+        background: var(--gray-200);
+        color: var(--gray-800);
+    }
+
+    .btn-danger {
+        background: var(--gradient-danger);
+        color: var(--white);
+    }
+
+    .btn-danger:hover {
+        background: var(--danger-red);
+        color: var(--white);
+    }
+
+    .alert {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 20px;
+        border-radius: var(--radius-lg);
+        margin-bottom: 24px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid transparent;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+        color: #059669;
+        border-color: #a7f3d0;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 100%);
+        color: #dc2626;
+        border-color: #fecaca;
+    }
+
+    .alert-close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        font-size: 1.4rem;
+        cursor: pointer;
+        color: inherit;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .alert-close:hover {
+        opacity: 1;
+    }
+
+    .filters-simple {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        padding: 24px;
+        margin-bottom: 32px;
+        border: 1px solid var(--gray-200);
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .filters-horizontal {
+        flex-direction: row !important;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 20px;
+    }
+    @@media (max-width: 900px) {
+        .filters-horizontal {
+            flex-direction: column !important;
+            gap: 16px;
+        }
+    }
+
+    .search-input {
+        flex: 1;
+        min-width: 300px;
+        padding: 12px 16px;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        background: var(--white);
+        transition: all 0.3s ease;
+        color: var(--gray-700);
+    }
+
+    .search-input:focus {
+        border-color: var(--primary-blue-light);
+        box-shadow: 0 0 0 3px rgba(92, 159, 212, 0.1);
+        outline: none;
+    }
+
+    .search-input::placeholder {
+        color: var(--gray-500);
+    }
+
+    .filter-select {
+        padding: 12px 16px;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        background: var(--white);
+        color: var(--gray-700);
+        font-weight: 500;
+        transition: all 0.3s ease;
+        min-width: 150px;
+    }
+
+    .filter-select:focus {
+        border-color: var(--primary-blue-light);
+        box-shadow: 0 0 0 3px rgba(92, 159, 212, 0.1);
+        outline: none;
+    }
+
+    .table-container {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+        overflow-x: auto;
+    }
+
+    .users-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 0.9rem;
+    }
+
+    .users-table th {
+        background: var(--gray-100);
+        padding: 20px 16px;
+        text-align: left;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--gray-600);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        border-bottom: 2px solid var(--gray-200);
+        position: relative;
+    }
+
+    .users-table th::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 2px;
+        background: var(--primary-blue);
+        opacity: 0.3;
+    }
+
+    .users-table td {
+        padding: 20px 16px;
+        border-bottom: 1px solid var(--gray-200);
+        font-size: 0.9rem;
+        color: var(--gray-700);
+        font-weight: 500;
+        vertical-align: middle;
+    }
+
+    .users-table tr {
+        transition: all 0.3s ease;
+    }
+
+    .users-table tbody tr:hover {
+        background: var(--gray-50);
+        transform: scale(1.01);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .user-name-cell {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .user-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--gradient-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 0.9rem;
+        font-weight: 700;
+        box-shadow: var(--shadow-sm);
+        border: 3px solid var(--white);
+    }
+
+    .user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .name-primary {
+        font-weight: 600;
+        color: var(--gray-800);
+        font-size: 0.95rem;
+    }
+
+    .name-secondary {
+        font-size: 0.8rem;
+        color: var(--gray-500);
+        font-weight: 500;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: var(--radius-sm);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .badge-empleado {
+        background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+    }
+
+    .badge-supervisor {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        color: #d97706;
+        border: 1px solid #fde047;
+    }
+
+    .badge-gerente {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #059669;
+        border: 1px solid #86efac;
+    }
+
+    .status-active {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--success-green);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-inactive {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--gray-500);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-active i,
+    .status-inactive i {
+        font-size: 0.6rem;
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    .actions-cell {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .btn-action {
+        padding: 8px 10px;
+        border: none;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-sm);
+        min-width: 36px;
+        height: 36px;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-edit {
+        background: var(--gradient-accent);
+        color: var(--white);
+    }
+
+    .btn-edit:hover {
+        background: var(--primary-blue-dark);
+        color: var(--white);
+        text-decoration: none;
+    }
+
+    .btn-delete {
+        background: var(--gradient-danger);
+        color: var(--white);
+    }
+
+    .btn-delete:hover {
+        background: var(--danger-red);
+    }
+
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-simple {
+        background: var(--white);
+        border-radius: var(--radius-xl);
+        max-width: 450px;
+        width: 90%;
+        box-shadow: var(--shadow-xl);
+        border: 1px solid var(--gray-200);
+        animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @@keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .modal-header {
+        padding: 24px 24px 16px 24px;
+        border-bottom: 1px solid var(--gray-200);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--gray-800);
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: var(--gray-500);
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+        background: var(--gray-100);
+        color: var(--gray-700);
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    .modal-body p {
+        margin: 0 0 12px 0;
+        color: var(--gray-700);
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .modal-body .warning {
+        color: var(--warning-orange);
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .modal-footer {
+        padding: 16px 24px 24px 24px;
+        border-top: 1px solid var(--gray-200);
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+    }
+
+    .no-results {
+        background: var(--white);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-lg);
+        text-align: center;
+        padding: 60px 24px;
+        border: 1px solid var(--gray-200);
+    }
+
+    .no-results p {
+        color: var(--gray-500);
+        font-size: 1.1rem;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    .no-results::before {
+        content: '\f007';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 400;
+        font-size: 3rem;
+        color: var(--gray-300);
+        display: block;
+        margin-bottom: 16px;
+    }
+
+    .empty-state-card {
+        max-width: 900px;
+        margin: 16px auto 0 auto;
+        background: var(--white);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-lg);
+        padding: 36px 38px 30px 38px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        border-left: 8px solid var(--primary-blue);
+        border: 1px solid var(--gray-200);
+    }
+
+    .empty-state-icon {
+        font-size: 2.6rem;
+        color: var(--primary-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .empty-state-content {
+        flex: 1;
+    }
+
+    .empty-state-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--primary-blue);
+        margin-bottom: 6px;
+    }
+
+    .empty-state-description {
+        color: var(--gray-500);
+        font-size: 1.08rem;
+        margin: 0;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 1200px) {
+        .users-management-simple {
+            padding: 24px;
+        }
+
+        .page-header-simple {
+            padding: 24px;
+        }
+
+        .page-header-simple h1 {
+            font-size: 1.8rem;
+        }
+
+        .filters-simple {
+            padding: 20px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .users-management-simple {
+            padding: 16px;
+        }
+
+        .page-header-simple {
+            flex-direction: column;
+            gap: 20px;
+            align-items: stretch;
+            text-align: center;
+        }
+
+        .page-header-simple h1 {
+            font-size: 1.6rem;
+            justify-content: center;
+        }
+
+        .filters-simple {
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .search-input {
+            min-width: 0;
+        }
+
+        .filter-select {
+            min-width: 0;
+        }
+
+        .users-table {
+            font-size: 0.8rem;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 12px 8px;
+        }
+
+        .user-name-cell {
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            font-size: 0.8rem;
+        }
+
+        .actions-cell {
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .empty-state-card {
+            flex-direction: column;
+            text-align: center;
+            gap: 16px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .page-header-simple h1 {
+            font-size: 1.4rem;
+        }
+
+        .modal-simple {
+            margin: 20px;
+            width: calc(100% - 40px);
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 10px 6px;
+        }
+    }
+
+    /* Animaciones */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-header-simple,
+    .filters-simple,
+    .table-container {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .users-table tbody tr {
+        animation: fadeInUp 0.4s ease-out;
+    }
+
+    /* Mejorar legibilidad en pantallas con zoom */
+    @@media (min-resolution: 120dpi) {
+        .users-table {
+            font-size: 0.85rem;
+        }
+        
+        .btn {
+            font-size: 0.9rem;
+        }
+        
+        .badge {
+            font-size: 0.7rem;
+        }
+        
+        .search-input,
+        .filter-select {
+            font-size: 0.9rem;
+        }
+    }
+
+    .filters-simple.filters-horizontal {
+        display: flex;
+        flex-direction: row !important;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+    }
+    .filters-simple.filters-horizontal .search-input,
+    .filters-simple.filters-horizontal .filter-select {
+        min-width: 220px;
+        width: auto;
+        flex: none;
+    }
+    @@media (max-width: 900px) {
+        .filters-simple.filters-horizontal {
+            flex-direction: column !important;
+            gap: 16px;
+        }
+        .filters-simple.filters-horizontal .search-input,
+        .filters-simple.filters-horizontal .filter-select {
+            min-width: 0;
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="users-management-simple">
+    <!-- Header simple -->
+    <div class="page-header-simple">
+        <h1>Gestión de Usuarios</h1>
+        <a href="@Url.Action("CrearUsuario", "ControlUsuarios")" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            Nuevo Usuario
+        </a>
+    </div>
+
+    <!-- Mensajes de alerta simples -->
+    @if (TempData["SuccessMessage"] != null && (
+        TempData["SuccessMessage"].ToString().ToLower().Contains("usuario") ||
+        TempData["SuccessMessage"].ToString().ToLower().Contains("rol") ||
+        TempData["SuccessMessage"].ToString().ToLower().Contains("creado") ||
+        TempData["SuccessMessage"].ToString().ToLower().Contains("modificado") ||
+        TempData["SuccessMessage"].ToString().ToLower().Contains("eliminado")
+        ))
+    {
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none'">×</button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null && (
+        TempData["ErrorMessage"].ToString().ToLower().Contains("usuario") ||
+        TempData["ErrorMessage"].ToString().ToLower().Contains("rol") ||
+        TempData["ErrorMessage"].ToString().ToLower().Contains("creado") ||
+        TempData["ErrorMessage"].ToString().ToLower().Contains("modificado") ||
+        TempData["ErrorMessage"].ToString().ToLower().Contains("eliminado")
+        ))
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <!-- Filtros simples -->
+    <div class="filters-simple filters-horizontal">
+        <input type="text" id="searchInput" placeholder="Buscar usuarios..." class="search-input">
+        <select id="statusFilter" class="filter-select">
+            <option value="">Todos los estados</option>
+            <option value="true">Activo</option>
+            <option value="false">Inactivo</option>
+        </select>
+    </div>
+
+    <!-- Tabla simple -->
+    <div class="table-container">
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>NOMBRE</th>
+                    <th>EMAIL</th>
+                    <th>ROL</th>
+                    <th>CARGO</th>
+                    <th>DEPARTAMENTO</th>
+                    <th>ESTADO</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody">
+                @foreach (var usuario in Model)
+                {
+                    <tr class="user-row" 
+                        data-name="@usuario.Nombre @usuario.Apellidos" 
+                        data-email="@usuario.Email" 
+                        data-role="@usuario.Rol" 
+                        data-status="@usuario.Activo.ToString().ToLower()"
+                        data-department="@(usuario.Departamento ?? "")">
+                        <td>
+                            <div class="user-name-cell">
+                                <div class="user-avatar">
+                                    @{
+                                        var initials = "";
+                                        if (!string.IsNullOrEmpty(usuario.Nombre))
+                                        {
+                                            var nameParts = usuario.Nombre.Split(' ');
+                                            initials = nameParts.Length > 1 ? 
+                                                $"{nameParts[0][0]}{nameParts[1][0]}" : 
+                                                $"{nameParts[0][0]}{(nameParts[0].Length > 1 ? nameParts[0][1] : "")}";
+                                        }
+                                    }
+                                    @initials.ToUpper()
+                                </div>
+                                <div class="user-info">
+                                    <div class="name-primary">@usuario.Nombre</div>
+                                    <div class="name-secondary">@usuario.Apellidos</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@usuario.Email</td>
+                        <td>
+                            @switch (usuario.Rol)
+                            {
+                                case "empleado":
+                                    <span class="badge badge-empleado">EMPLEADO</span>
+                                    break;
+                                case "aprobador1":
+                                    <span class="badge badge-supervisor">SUPERVISOR</span>
+                                    break;
+                                case "aprobador2":
+                                    <span class="badge badge-gerente">GERENTE</span>
+                                    break;
+                                default:
+                                    <span class="badge">@usuario.Rol.ToUpper()</span>
+                                    break;
+                            }
+                        </td>
+                        <td>@(usuario.Cargo ?? "-")</td>
+                        <td>@(usuario.Departamento ?? "-")</td>
+                        <td>
+                            @if (usuario.Activo)
+                            {
+                                <span class="status-active">
+                                    <i class="fas fa-circle"></i>
+                                    ACTIVO
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="status-inactive">
+                                    <i class="fas fa-circle"></i>
+                                    INACTIVO
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                <a href="@Url.Action("EditarUsuario", "ControlUsuarios", new { id = usuario.Id })" 
+                                   class="btn-action btn-edit" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                @if (usuario.Email != "camila.flores@primar.cl")
+                                {
+                                    <button type="button" class="btn-action btn-delete" 
+                                            onclick="confirmarEliminar(@usuario.Id, '@usuario.Nombre')" 
+                                            title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Mensaje cuando no hay resultados -->
+    <div id="noResults" class="no-results" style="display: none;">
+        <p>No se encontraron usuarios</p>
+    </div>
+</div>
+
+<!-- Modal simple -->
+<div class="modal-overlay" id="modalConfirmarEliminar" style="display: none;">
+    <div class="modal-simple">
+        <div class="modal-header">
+            <h3>Confirmar Eliminación</h3>
+            <button type="button" class="modal-close" onclick="cerrarModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p>¿Está seguro de que desea eliminar al usuario <strong id="nombreUsuarioEliminar"></strong>?</p>
+            <p class="warning">Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+            <form id="formEliminarUsuario" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <style>
+        .users-management-simple {
+            display: flex;
+            flex-direction: column;
+            min-height: 70vh;
+        }
+        .empty-state-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .empty-state-card {
+            margin: 0 auto;
+        }
+        .footer-empty {
+            text-align: center;
+            color: #6b7280;
+            font-size: 1rem;
+            margin-top: 48px;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+    </style>
+    <div class="empty-state-wrapper">
+        <div class="empty-state-card">
+            <div class="empty-state-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="empty-state-content">
+                <div class="empty-state-title">Sin usuarios registrados</div>
+                <div class="empty-state-description">No hay usuarios registrados en este momento.</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-empty">
+        Todos los derechos reservados
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Filtros simples
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const rows = document.querySelectorAll('.user-row');
+            const noResults = document.getElementById('noResults');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const name = row.dataset.name.toLowerCase();
+                const email = row.dataset.email.toLowerCase();
+                const department = row.dataset.department.toLowerCase();
+                const status = row.dataset.status;
+
+                const matchesSearch = name.includes(searchTerm) || 
+                                    email.includes(searchTerm) || 
+                                    department.includes(searchTerm);
+                const matchesStatus = !statusFilter || status === statusFilter;
+
+                if (matchesSearch && matchesStatus) {
+                    row.style.display = 'table-row';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+
+        function confirmarEliminar(id, nombre) {
+            document.getElementById('nombreUsuarioEliminar').textContent = nombre;
+            document.getElementById('formEliminarUsuario').action = '@Url.Action("EliminarUsuario", "ControlUsuarios")/' + id;
+            document.getElementById('modalConfirmarEliminar').style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalConfirmarEliminar').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('searchInput').addEventListener('input', filterUsers);
+            document.getElementById('statusFilter').addEventListener('change', filterUsers);
+
+            document.getElementById('modalConfirmarEliminar').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    cerrarModal();
+                }
+            });
+        });
+    </script>
+}

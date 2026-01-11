@@ -1,0 +1,577 @@
+@model RendicionesPrimar.Models.ViewModels.RendicionDetalleViewModel
+@{
+    string userRole = Model.UserRole?.ToLower() ?? "empleado";
+    string userName = Model.Usuario?.Nombre ?? "Usuario";
+    string rolLabel = userRole switch {
+        "aprobador1" or "supervisor" => "SUPERVISOR",
+        "aprobador2" or "gerente" => "GERENTE",
+        _ => "EMPLEADO"
+    };
+    string rolColor = userRole switch {
+        "aprobador1" or "supervisor" => "#2563eb",
+        "aprobador2" or "gerente" => "#10b981",
+        _ => "#64748b"
+    };
+    string menuInicio = userRole == "empleado" ? "Inicio" : "MI Panel";
+    string menuRendiciones = userRole == "empleado" ? "Rendiciones" : "Rendiciones";
+    string menuNotificaciones = userRole == "empleado" ? "Notificaciones" : "Notificación";
+    string menuAyuda = "Ayuda";
+    string menuPerfil = userRole == "empleado" ? "Mi Perfil" : "Mi Perfil";
+    string menuGestion = userRole == "aprobador1" || userRole == "supervisor" ? "Gestión de Empleados" : null;
+    string logoutText = userRole == "empleado" ? "Salir" : "Cerrar Sesión";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle de Rendición - Sistema de Rendiciones | Primar S.A.</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primar-primary:rgb(31, 90, 136);
+            --primar-primary-dark:rgb(31, 90, 136);
+            --primar-primary-light: rgb(31, 90, 136);
+            --primar-secondary: #f1f5f9;
+            --primar-success: #10b981;
+            --primar-warning: #f59e0b;
+            --primar-danger: #ef4444;
+            --primar-info: #06b6d4;
+            --primar-text: #1e293b;
+            --primar-text-light: #64748b;
+            --primar-background: #f8fafc;
+            --primar-white: #ffffff;
+            --primar-border: #e2e8f0;
+            --primar-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --primar-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --primar-radius: 12px;
+            --primar-radius-sm: 8px;
+            --primar-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --primar-gradient: linear-gradient(135deg, var(--primar-primary) 0%, var(--primar-primary-light) 100%);
+            --rol-color: @rolColor;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--primar-background);
+            color: var(--primar-text);
+            line-height: 1.6;
+            font-size: 15px;
+            font-weight: 400;
+            margin: 0;
+        }
+        .header {
+            background: var(--primar-gradient);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100vw;
+            left: 0;
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+        .brand { display: flex; align-items: center; color: white; gap: 12px; }
+        .brand i { font-size: 1.5rem; }
+        .brand-text h1 { font-size: 1.25rem; font-weight: 700; margin: 0; line-height: 1.2; }
+        .brand-text span { font-size: 0.75rem; opacity: 0.9; font-weight: 400; }
+        .nav { display: flex; align-items: center; gap: 8px; }
+        .nav-link { color: rgba(255,255,255,0.95); text-decoration: none; padding: 10px 16px; border-radius: var(--primar-radius-sm); font-weight: 500; font-size: 0.97rem; transition: var(--primar-transition); display: flex; align-items: center; gap: 8px; position: relative; }
+        .nav-link:hover, .nav-link.active { color: white; background-color: rgba(255,255,255,0.13); text-decoration: none; }
+        .user-section { display: flex; align-items: center; gap: 16px; padding-left: 24px; border-left: 1px solid rgba(255,255,255,0.13); }
+        .user-info { color: white; text-align: right; }
+        .user-name { display: block; font-weight: 500; font-size: 0.97rem; }
+        .user-role-dyn {
+            background: var(--rol-color);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 2px 10px;
+            margin-left: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .btn-logout { background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.18); color: white; padding: 8px 16px; border-radius: var(--primar-radius-sm); font-size: 0.97rem; font-weight: 500; cursor: pointer; transition: var(--primar-transition); display: flex; align-items: center; gap: 8px; }
+        .btn-logout:hover { background: rgba(255,255,255,0.22); }
+        .main { flex: 1; padding: 40px 0; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+        @@media (max-width: 768px) {
+            .header-content { flex-direction: column; height: auto; padding: 16px 24px; gap: 16px; }
+            .nav { flex-wrap: wrap; justify-content: center; }
+            .user-section { border-left: none; border-top: 1px solid rgba(255,255,255,0.2); padding-left: 0; padding-top: 16px; }
+            .main { padding: 24px 0; }
+            .container { padding: 0 16px; }
+        }
+        @@media (max-width: 480px) {
+            .container { padding: 0 12px; }
+            .brand { flex-direction: column; gap: 4px; text-align: center; }
+            .nav { flex-direction: column; gap: 8px; }
+            .user-section { flex-direction: column; gap: 12px; }
+        }
+        .estado-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px 0 rgba(31,90,136,0.07);
+            padding: 32px 48px;
+            margin: 32px auto;
+            max-width: 350px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border-left: 6px solid;
+        }
+        .estado-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px;
+        }
+        .estado-card.aprobado, .estado-card.aprobado .estado-text, .estado-card.aprobado .estado-dot {
+            color: #10b981 !important;
+            border-color: #10b981 !important;
+            background: #10b981 !important;
+            box-shadow: 0 0 0 2px #10b981;
+        }
+        .estado-card.rechazado, .estado-card.rechazado .estado-text, .estado-card.rechazado .estado-dot {
+            color: #ef4444 !important;
+            border-color: #ef4444 !important;
+            background: #ef4444 !important;
+            box-shadow: 0 0 0 2px #ef4444;
+        }
+        .estado-card.pendiente, .estado-card.pendiente .estado-text, .estado-card.pendiente .estado-dot {
+            color: #f59e0b !important;
+            border-color: #f59e0b !important;
+            background: #f59e0b !important;
+            box-shadow: 0 0 0 2px #f59e0b;
+        }
+        .estado-card.pagado, .estado-card.pagado .estado-text, .estado-card.pagado .estado-dot {
+            color: #2563eb !important;
+            border-color: #2563eb !important;
+            background: #2563eb !important;
+            box-shadow: 0 0 0 2px #2563eb;
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="header-content">
+        <div class="brand">
+            <img src="~/images/primarlogo.png" alt="Primar Logo" style="height:38px; width:auto; display:block;" />
+        </div>
+        <nav class="nav">
+            <a href="@Url.Action(userRole == "empleado" ? "Index" : "Dashboard", userRole == "empleado" ? "Home" : (userRole == "aprobador2" || userRole == "gerente" ? "Gerentes" : "Supervisores"))" class="nav-link">
+                <i class="fas fa-home"></i>
+                @menuInicio
+            </a>
+            <a href="@Url.Action(userRole == "empleado" ? "MisRendiciones" : "RendicionesPendientes", userRole == "empleado" ? "Empleados" : (userRole == "aprobador2" || userRole == "gerente" ? "Gerentes" : "Supervisores"))" class="nav-link">
+                <i class="fas fa-tasks"></i>
+                @menuRendiciones
+            </a>
+            @if (menuGestion != null)
+            {
+                <a href="@Url.Action("Index", "ControlUsuarios")" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    @menuGestion
+                </a>
+            }
+            <a href="@Url.Action("Notificaciones", userRole == "empleado" ? "Empleados" : (userRole == "aprobador2" || userRole == "gerente" ? "Gerentes" : "Supervisores"))" class="nav-link">
+                <i class="fas fa-bell"></i>
+                @menuNotificaciones
+            </a>
+            <a href="@Url.Action("Ayuda", "Home")" class="nav-link">
+                <i class="fas fa-question-circle"></i>
+                @menuAyuda
+            </a>
+            <a href="@Url.Action("Perfil", userRole == "empleado" ? "Empleados" : (userRole == "aprobador2" || userRole == "gerente" ? "Gerentes" : "Supervisores"))" class="nav-link">
+                <i class="fas fa-user"></i>
+                @menuPerfil
+            </a>
+        </nav>
+        <div class="user-section">
+            <div class="user-info">
+                <span class="user-name">@userName</span>
+                <span class="user-role-dyn">@rolLabel</span>
+            </div>
+            <form method="post" action="@Url.Action("Logout", "Account")" style="margin: 0;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    @logoutText
+                </button>
+            </form>
+        </div>
+    </div>
+</header>
+<main class="main">
+    <div class="container">
+        <!-- CONTENIDO MODERNO Y LIMPIO -->
+        <div class="main-super-container" style="max-width: 1200px; margin: 48px auto 0 auto; padding: 0 12px;">
+            <!-- Tarjeta principal de la rendición -->
+            <div class="card-super fade-in-up" style="background: var(--primar-white); border-radius: 18px; box-shadow: 0 4px 24px 0 rgba(31,90,136,0.10); padding: 36px 36px 24px 36px; margin-bottom: 40px; border: none; display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; flex-wrap: wrap;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <h1 style="font-size: 2.3rem; font-weight: 800; color: var(--primar-text); margin: 0; letter-spacing: 0.01em; display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-file-invoice-dollar" style="font-size: 1.5rem; color: var(--primar-primary);"></i>
+                        Rendición #@Model.NumeroTicket
+                    </h1>
+                    <p style="color: var(--primar-text-light); margin: 0; font-size: 1.18rem; font-weight: 500;">@Model.Titulo</p>
+                </div>
+                <div style="text-align: right; min-width: 220px;">
+                    @{
+                        string claseEstado = Model.Estado switch {
+                            "aprobado" or "aprobado_1" or "aprobado_2" => "aprobado",
+                            "rechazado" or "rechazado_1" => "rechazado",
+                            "pendiente" => "pendiente",
+                            "pagado" => "pagado",
+                            _ => "pendiente"
+                        };
+                        string textoEstado = Model.Estado.ToUpperInvariant().Replace("_", " ");
+                    }
+                    <div class="status-badge status-@claseEstado" style="font-size: 1.1rem; padding: 10px 22px; margin-bottom: 8px; display: inline-flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-circle"></i>
+                        @textoEstado
+                    </div>
+                    <div style="color: var(--primar-text-light); font-size: 1.01rem; font-weight: 600;">Creada el @Model.FechaCreacion.ToString("dd/MM/yyyy 'a las' HH:mm")</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; align-items: flex-start;">
+                <!-- Columna Principal -->
+                <div style="display: flex; flex-direction: column; gap: 32px;">
+                    <!-- Información de la Rendición -->
+                    <div class="card-super" style="background: var(--primar-white); border-radius: 16px; box-shadow: 0 2px 12px 0 rgba(31,90,136,0.08); padding: 28px 28px 18px 28px; border: none;">
+                        <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--primar-text); margin: 0 0 18px 0; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-info-circle" style="font-size: 1.1rem; color: var(--primar-primary);"></i>
+                            Información de la Rendición
+                        </h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+                            <div>
+                                <label class="label-super">TÍTULO</label>
+                                <p class="value-super">@Model.Titulo</p>
+                            </div>
+                            <div>
+                                <label class="label-super">MONTO TOTAL</label>
+                                <p class="value-super" style="color: var(--primar-success); font-size: 1.3rem; font-weight: 700;">$@Model.MontoTotal.ToString("N0")</p>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <label class="label-super">DESCRIPCIÓN</label>
+                                <p class="value-super" style="background: var(--primar-secondary); padding: 12px; border-radius: var(--primar-radius-sm);">@Model.Descripcion</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Información Personal -->
+                    <div class="card-super" style="background: var(--primar-white); border-radius: 16px; box-shadow: 0 2px 12px 0 rgba(31,90,136,0.08); padding: 28px 28px 18px 28px; border: none;">
+                        <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--primar-text); margin: 0 0 18px 0; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-user" style="font-size: 1.1rem; color: var(--primar-primary);"></i>
+                            Información Personal
+                        </h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+                            <div>
+                                <label class="label-super">NOMBRE COMPLETO</label>
+                                <p class="value-super">@(string.IsNullOrEmpty(Model.Apellidos) ? "No especificado" : Model.Nombre + " " + Model.Apellidos)</p>
+                            </div>
+                            <div>
+                                <label class="label-super">RUT</label>
+                                <p class="value-super">@(string.IsNullOrEmpty(Model.Rut) ? "No especificado" : Model.Rut)</p>
+                            </div>
+                            <div>
+                                <label class="label-super">EMAIL</label>
+                                <p class="value-super">@Model.Usuario.Email</p>
+                            </div>
+                            <div>
+                                <label class="label-super">TELÉFONO</label>
+                                <p class="value-super">@(string.IsNullOrEmpty(Model.Telefono) ? "No especificado" : Model.Telefono)</p>
+                            </div>
+                            <div>
+                                <label class="label-super">CARGO</label>
+                                <p class="value-super">@(string.IsNullOrEmpty(Model.Cargo) ? "No especificado" : Model.Cargo)</p>
+                            </div>
+                            <div>
+                                <label class="label-super">DEPARTAMENTO</label>
+                                <p class="value-super">@(string.IsNullOrEmpty(Model.Departamento) ? "No especificado" : Model.Departamento)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Archivos Adjuntos -->
+                    @if (Model.ArchivosAdjuntos.Any())
+                    {
+                        <div class="card-super" style="background: var(--primar-white); border-radius: 16px; box-shadow: 0 2px 12px 0 rgba(31,90,136,0.08); padding: 28px 28px 18px 28px; border: none;">
+                            <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--primar-text); margin: 0 0 18px 0; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-paperclip" style="font-size: 1.1rem; color: var(--primar-primary);"></i>
+                                Documentos Adjuntos
+                            </h2>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;">
+                                @foreach (var archivo in Model.ArchivosAdjuntos)
+                                {
+                                    <div style="background: var(--primar-secondary); border-radius: var(--primar-radius-sm); padding: 12px; border: none; display: flex; align-items: center; gap: 10px;">
+                                        <i class="fas fa-file" style="color: var(--primar-primary); font-size: 1.1rem;"></i>
+                                        <div style="flex: 1;">
+                                            <p style="font-weight: 500; color: var(--primar-text); margin: 0; font-size: 0.95rem;">@archivo.NombreArchivo</p>
+                                            <p style="color: var(--primar-text-light); margin: 2px 0 0 0; font-size: 0.8rem;">@archivo.TipoArchivo • @((archivo.TamanoArchivo / 1024.0 / 1024.0).ToString("F2")) MB</p>
+                                        </div>
+                                        <a href="@Url.Action("DescargarArchivo", "Rendiciones", new { id = archivo.Id })" 
+                                           style="color: var(--primar-primary); text-decoration: none; padding: 6px; border-radius: 50%; transition: var(--primar-transition);" 
+                                           onmouseover="this.style.background='rgba(37, 99, 235, 0.1)'" 
+                                           onmouseout="this.style.background='transparent'">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                <!-- Sidebar -->
+                <div style="display: flex; flex-direction: column; gap: 32px;">
+                    <!-- Estado y Acciones -->
+                    <div class="card-super" style="background: var(--primar-white); border-radius: 16px; box-shadow: 0 2px 12px 0 rgba(31,90,136,0.08); padding: 28px 28px 18px 28px; border: none;">
+                        <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--primar-text); margin: 0 0 18px 0; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-cogs" style="font-size: 1rem; color: var(--primar-primary);"></i>
+                            Estado y Acciones
+                        </h2>
+                        <div style="margin-bottom: 18px;">
+                            <div class="status-badge status-@claseEstado" style="width: 100%; justify-content: center; font-size: 1.1rem; padding: 12px; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-circle"></i>
+                                @textoEstado
+                            </div>
+                        </div>
+                        @if (Model.UserRole == "aprobador1" && Model.Estado == "pendiente")
+                        {
+                            <div style="margin-bottom: 12px;">
+                                <form method="post" action="@Url.Action("Aprobar1", "Rendiciones", new { id = Model.Id })" style="margin: 0;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-action btn-primary" style="width: 100%; justify-content: center;">
+                                        <i class="fas fa-check-double"></i>
+                                        Aprobar
+                                    </button>
+                                </form>
+                            </div>
+                            <div>
+                                <button type="button" class="btn-action btn-danger" style="width: 100%; justify-content: center;" onclick="abrirModalRechazo()">
+                                    <i class="fas fa-times"></i>
+                                    Rechazar
+                                </button>
+                            </div>
+                        }
+                        else if (Model.UserRole == "aprobador2" && Model.Estado == "aprobado_1")
+                        {
+                            <div style="margin-bottom: 12px;">
+                                <form method="post" action="@Url.Action("Aprobar2", "Rendiciones", new { id = Model.Id })" style="margin: 0;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-action btn-primary" style="width: 100%; justify-content: center;">
+                                        <i class="fas fa-check-double"></i>
+                                        Aprobar
+                                    </button>
+                                </form>
+                            </div>
+                            <div>
+                                <button type="button" class="btn-action btn-danger" style="width: 100%; justify-content: center;" onclick="abrirModalRechazo()">
+                                    <i class="fas fa-times"></i>
+                                    Rechazar
+                                </button>
+                            </div>
+                        }
+                        else if (Model.UserRole == "empleado" && Model.Estado == "pendiente")
+                        {
+                            <div>
+                                <a href="@Url.Action("Editar", "Rendiciones", new { id = Model.Id })" class="btn-action btn-secondary" style="width: 100%; justify-content: center;">
+                                    <i class="fas fa-edit"></i>
+                                    Editar Rendición
+                                </a>
+                            </div>
+                        }
+                        else if (Model.UserRole == "empleado" && Model.Estado == "rechazado")
+                        {
+                            <div>
+                                <a href="@Url.Action("Crear", "Rendiciones")" class="btn-action btn-primary" style="width: 100%; justify-content: center;">
+                                    <i class="fas fa-redo"></i>
+                                    Crear Nueva Rendición
+                                </a>
+                            </div>
+                        }
+                        else if (Model.UserRole == "empleado" && Model.Estado == "rechazado_1")
+                        {
+                            <div class="estado-card rechazado">
+                                <span class="estado-dot"></span>
+                                <span class="estado-text">RECHAZADO 1</span>
+                            </div>
+                        }
+                    </div>
+                    <!-- Seguimiento del Proceso -->
+                    <div class="card-super" style="background: var(--primar-white); border-radius: 16px; box-shadow: 0 2px 12px 0 rgba(31,90,136,0.08); padding: 28px 28px 18px 28px; border: none;">
+                        <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--primar-text); margin: 0 0 18px 0; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-clock" style="font-size: 1rem; color: var(--primar-primary);"></i>
+                            Seguimiento del Proceso
+                        </h2>
+                        <div style="display: flex; flex-direction: column; gap: 18px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-flag-checkered" style="color: var(--primar-primary); font-size: 1rem;"></i>
+                                <div style="flex: 1;">
+                                    <p style="font-weight: 600; color: var(--primar-text); margin: 0; font-size: 1rem;">Primera Revisión</p>
+                                    <p style="color: var(--primar-text-light); margin: 2px 0 0 0; font-size: 0.9rem;">
+                                        @if (Model.Estado == "pendiente")
+                                        {
+                                            <span style="color: var(--primar-warning);">En revisión</span>
+                                        }
+                                        else if (Model.Estado == "rechazado" || Model.Estado == "rechazado_1")
+                                        {
+                                            <span style="color: var(--primar-danger);">Rechazado</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: var(--primar-success);">Aprobado</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-user-check" style="color: var(--primar-primary); font-size: 1rem;"></i>
+                                <div style="flex: 1;">
+                                    <p style="font-weight: 600; color: var(--primar-text); margin: 0; font-size: 1rem;">Aprobación Final</p>
+                                    <p style="color: var(--primar-text-light); margin: 2px 0 0 0; font-size: 0.9rem;">
+                                        @if (Model.Estado == "pendiente")
+                                        {
+                                            <span style="color: var(--primar-text-light);">En espera</span>
+                                        }
+                                        else if (Model.Estado == "aprobado_1")
+                                        {
+                                            <span style="color: var(--primar-warning);">En revisión</span>
+                                        }
+                                        else if (Model.Estado == "rechazado")
+                                        {
+                                            <span style="color: var(--primar-danger);">Rechazado</span>
+                                        }
+                                        else if (Model.Estado == "aprobado_2" || Model.Estado == "pagado")
+                                        {
+                                            <span style="color: var(--primar-success);">Aprobado</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-credit-card" style="color: var(--primar-primary); font-size: 1rem;"></i>
+                                <div style="flex: 1;">
+                                    <p style="font-weight: 600; color: var(--primar-text); margin: 0; font-size: 1rem;">Procesamiento de Pago</p>
+                                    <p style="color: var(--primar-text-light); margin: 2px 0 0 0; font-size: 0.9rem;">
+                                        @if (Model.Estado == "rechazado")
+                                        {
+                                            <span style="color: var(--primar-danger);">Rechazado</span>
+                                        }
+                                        else if (Model.Estado == "pagado")
+                                        {
+                                            <span style="color: var(--primar-success);">Completado</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: var(--primar-text-light);">En espera</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mejorar estilos de tarjetas, títulos, labels, valores y botones -->
+        <style>
+        .card-super { background: var(--primar-white); border-radius: 16px; box-shadow: 0 2px 12px 0 rgba(31,90,136,0.08); border: none; margin-bottom: 0; }
+        .label-super { font-weight: 700; color: var(--primar-text-light); font-size: 0.93rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; display: block; }
+        .value-super { font-size: 1.13rem; color: var(--primar-text); font-weight: 500; margin: 8px 0 0 0; }
+        .btn-action { padding: 12px 0; border-radius: 8px; font-size: 1.05rem; font-weight: 700; text-decoration: none; transition: var(--primar-transition), box-shadow 0.18s, transform 0.12s; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 2px 12px rgba(31,90,136,0.07); justify-content: center; }
+        .btn-primary { background: linear-gradient(90deg, var(--primar-primary) 60%, #2563eb 100%); color: white; border: none; }
+        .btn-primary:hover { background: #23608e; color: white; transform: translateY(-2px) scale(1.04); box-shadow: 0 6px 18px rgba(31,90,136,0.13); }
+        .btn-danger { background: linear-gradient(90deg, #ef4444 60%, #dc2626 100%); color: white; border: none; }
+        .btn-danger:hover { background: #b91c1c; color: white; text-decoration: none; }
+        .btn-secondary { background: #f1f5f9; color: var(--primar-primary); border: none; }
+        .btn-secondary:hover { background: #e2e8f0; color: var(--primar-primary); text-decoration: none; }
+        .status-badge { border-radius: 20px; font-size: 1.01rem; font-weight: 700; padding: 8px 18px; display: inline-flex; align-items: center; gap: 8px; letter-spacing: 0.02em; }
+        .fade-in-up { animation: fadeInUp 0.6s ease-out; }
+        @@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @@media (max-width: 1024px) { .main-super-container { padding: 0 8px; } .card-super { padding: 18px; } }
+        @@media (max-width: 900px) { .main-super-container { padding: 0 2px; } .card-super { padding: 10px; } }
+        @@media (max-width: 768px) { .main-super-container { padding: 0 2px; } .card-super { padding: 6px; } }
+        </style>
+
+        <!-- Modal para Rechazo con Comentarios SOLO para roles de aprobación (supervisor/gerente) -->
+        @if ((Model.UserRole == "aprobador1" && Model.Estado == "pendiente") || (Model.UserRole == "aprobador2" && Model.Estado == "aprobado_1"))
+        {
+        <div id="modalRechazo" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+            <div class="modal-content" style="background-color: var(--primar-white); margin: 15% auto; padding: 32px; border-radius: var(--primar-radius); width: 90%; max-width: 500px; box-shadow: var(--primar-shadow-hover);">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                    <div style="width: 40px; height: 40px; background: var(--primar-danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--primar-text); margin: 0;">Rechazar Rendición</h3>
+                </div>
+                <p style="color: var(--primar-text-light); margin-bottom: 24px; line-height: 1.6;">
+                    Por favor, indique el motivo del rechazo de la rendición <strong>@Model.NumeroTicket</strong>:
+                </p>
+                <form id="formRechazo" method="post" action="@Url.Action("Rechazar", "Rendiciones", new { id = Model.Id })">
+                    @Html.AntiForgeryToken()
+                    <div style="margin-bottom: 24px;">
+                        <label for="comentarios" style="font-weight: 600; color: var(--primar-text); margin-bottom: 8px; display: block;">Motivo del rechazo *</label>
+                        <textarea id="comentarios" name="comentarios" rows="4" style="width: 100%; padding: 12px; border: 2px solid var(--primar-border); border-radius: var(--primar-radius-sm); font-size: 1rem; resize: vertical;" 
+                                  placeholder="Describa el motivo del rechazo..." required></textarea>
+                    </div>
+                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <button type="button" onclick="cerrarModalRechazo()" class="btn btn-secondary" style="padding: 12px 24px;">
+                            <i class="fas fa-times" style="margin-right: 8px;"></i>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-danger" style="padding: 12px 24px;">
+                            <i class="fas fa-times-circle" style="margin-right: 8px;"></i>
+                            Rechazar Rendición
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script>
+            function abrirModalRechazo() {
+                document.getElementById('modalRechazo').style.display = 'block';
+                document.getElementById('comentarios').focus();
+            }
+            function cerrarModalRechazo() {
+                document.getElementById('modalRechazo').style.display = 'none';
+                document.getElementById('comentarios').value = '';
+            }
+            window.onclick = function(event) {
+                var modal = document.getElementById('modalRechazo');
+                if (event.target == modal) {
+                    cerrarModalRechazo();
+                }
+            }
+            document.getElementById('formRechazo').addEventListener('submit', function(e) {
+                var comentarios = document.getElementById('comentarios').value.trim();
+                if (!comentarios) {
+                    e.preventDefault();
+                    alert('Por favor, indique el motivo del rechazo.');
+                    document.getElementById('comentarios').focus();
+                    return false;
+                }
+            });
+        </script>
+        }
+    </div>
+</main>
+<div style="text-align:center;color:#64748b;font-size:0.98rem;margin:32px 0 12px 0;opacity:0.85;">
+    Todos los derechos reservados - Catalina Núñez
+</div>
+</body>
+</html>

@@ -1,0 +1,213 @@
+is_global = true
+build_property.TargetFramework = net9.0
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = RendicionesPrimar
+build_property.RootNamespace = RendicionesPrimar
+build_property.ProjectDir = C:\Users\karen\OneDrive\Escritorio\Rendicionprimar\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 9.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\karen\OneDrive\Escritorio\Rendicionprimar
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Account/CambiarContrasenaEmpleado.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxDYW1iaWFyQ29udHJhc2VuYUVtcGxlYWRvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Account/CambiarContrasenaGerente.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxDYW1iaWFyQ29udHJhc2VuYUdlcmVudGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Account/CambiarContrasenaSupervisor.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxDYW1iaWFyQ29udHJhc2VuYVN1cGVydmlzb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Account/NuevaContrasena.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxOdWV2YUNvbnRyYXNlbmEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Account/NuevaContrasenaConMfa.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxOdWV2YUNvbnRyYXNlbmFDb25NZmEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Account/RecuperarContrasena.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWN1cGVyYXJDb250cmFzZW5hLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Account/VerificarCodigoMfa.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxWZXJpZmljYXJDb2RpZ29NZmEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/ControlUsuarios/CrearUsuario.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbFVzdWFyaW9zXENyZWFyVXN1YXJpby5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/ControlUsuarios/EditarUsuario.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbFVzdWFyaW9zXEVkaXRhclVzdWFyaW8uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/ControlUsuarios/HistorialSupervisor.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbFVzdWFyaW9zXEhpc3RvcmlhbFN1cGVydmlzb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/ControlUsuarios/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbFVzdWFyaW9zXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Empleados/Ayuda.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbGVhZG9zXEF5dWRhLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Empleados/CambiarContrasenaEmpleado.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbGVhZG9zXENhbWJpYXJDb250cmFzZW5hRW1wbGVhZG8uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Empleados/MisRendiciones.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbGVhZG9zXE1pc1JlbmRpY2lvbmVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Empleados/Notificaciones.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbGVhZG9zXE5vdGlmaWNhY2lvbmVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Empleados/Perfil.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbGVhZG9zXFBlcmZpbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Gerentes/HistorialGerente.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VyZW50ZXNcSGlzdG9yaWFsR2VyZW50ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Gerentes/Notificaciones.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VyZW50ZXNcTm90aWZpY2FjaW9uZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Gerentes/Perfil.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VyZW50ZXNcUGVyZmlsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Gerentes/RendicionesPendientes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VyZW50ZXNcUmVuZGljaW9uZXNQZW5kaWVudGVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Home/Ayuda.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBeXVkYS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Home/AyudaGerente.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBeXVkYUdlcmVudGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Home/DashboardEmpleado.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxEYXNoYm9hcmRFbXBsZWFkby5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Home/DashboardGerente.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxEYXNoYm9hcmRHZXJlbnRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Home/DashboardSupervisor.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxEYXNoYm9hcmRTdXBlcnZpc29yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Home/Notificaciones.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxOb3RpZmljYWNpb25lcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Perfil/InformacionPersonal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVyZmlsXEluZm9ybWFjaW9uUGVyc29uYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Rendiciones/Crear.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVuZGljaW9uZXNcQ3JlYXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Rendiciones/Detalle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVuZGljaW9uZXNcRGV0YWxsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Rendiciones/DetalleEmpleado.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVuZGljaW9uZXNcRGV0YWxsZUVtcGxlYWRvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Rendiciones/DetalleGerente.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVuZGljaW9uZXNcRGV0YWxsZUdlcmVudGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Rendiciones/DetalleSupervisor.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVuZGljaW9uZXNcRGV0YWxsZVN1cGVydmlzb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Rendiciones/Editar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVuZGljaW9uZXNcRWRpdGFyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Startup/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RhcnR1cFxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Supervisores/Ayuda.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwZXJ2aXNvcmVzXEF5dWRhLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Supervisores/CambiarContrasenaSupervisor.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwZXJ2aXNvcmVzXENhbWJpYXJDb250cmFzZW5hU3VwZXJ2aXNvci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Supervisores/Notificaciones.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwZXJ2aXNvcmVzXE5vdGlmaWNhY2lvbmVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Supervisores/Perfil.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwZXJ2aXNvcmVzXFBlcmZpbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Supervisores/RendicionesPendientes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwZXJ2aXNvcmVzXFJlbmRpY2lvbmVzUGVuZGllbnRlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/karen/OneDrive/Escritorio/Rendicionprimar/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-adml6n1jip

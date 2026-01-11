@@ -1,0 +1,260 @@
+@model RendicionesPrimar.Models.ViewModels.RendicionDetalleViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = $"Rendición #{Model.NumeroTicket}";
+    
+    string claseEstado = Model.Estado switch {
+        "aprobado" or "aprobado_1" or "aprobado_2" => "aprobado",
+        "rechazado" or "rechazado_1" => "rechazado",
+        "pendiente" => "pendiente",
+        "pagado" => "pagado",
+        _ => "pendiente"
+    };
+    string textoEstado = Model.Estado.ToUpperInvariant().Replace("_", " ");
+}
+
+<div class="main-super-container" style="max-width: 1200px; margin: 0 auto; padding: 0 12px;">
+    <!-- Tarjeta principal de la rendición -->
+    <div class="card-super fade-in-up" style="background: var(--primar-white); border-radius: 18px; box-shadow: 0 4px 24px 0 rgba(31,90,136,0.10); padding: 36px 36px 24px 36px; margin-bottom: 40px; border: none; display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <h1 style="font-size: 2.3rem; font-weight: 800; color: var(--primar-text); margin: 0; letter-spacing: 0.01em; display: flex; align-items: center; gap: 12px;">
+                <i class="fas fa-file-invoice-dollar" style="font-size: 1.5rem; color: var(--primar-primary);"></i>
+                Rendición #@Model.NumeroTicket
+            </h1>
+            <p style="color: var(--primar-text-light); margin: 0; font-size: 1.18rem; font-weight: 500;">@Model.Titulo</p>
+        </div>
+        <div style="text-align: right; min-width: 220px;">
+            <div class="status-badge status-@claseEstado" style="font-size: 1.1rem; padding: 10px 22px; margin-bottom: 8px; display: inline-flex; align-items: center; gap: 10px;">
+                <i class="fas fa-circle"></i>
+                @textoEstado
+            </div>
+            <div style="color: var(--primar-text-light); font-size: 1.01rem; font-weight: 600;">Creada el @Model.FechaCreacion.ToString("dd/MM/yyyy 'a las' HH:mm")</div>
+        </div>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; align-items: flex-start;">
+        <!-- Columna Principal -->
+        <div style="display: flex; flex-direction: column; gap: 32px;">
+            <!-- Información de la Rendición -->
+            <div class="card-super" style="background: var(--primar-white); border-radius: 16px; box-shadow: 0 2px 12px 0 rgba(31,90,136,0.08); padding: 28px 28px 18px 28px; border: none;">
+                <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--primar-text); margin: 0 0 18px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-info-circle" style="font-size: 1.1rem; color: var(--primar-primary);"></i>
+                    Información de la Rendición
+                </h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+                    <div>
+                        <label class="label-super">TÍTULO</label>
+                        <p class="value-super">@Model.Titulo</p>
+                    </div>
+                    <div>
+                        <label class="label-super">MONTO TOTAL</label>
+                        <p class="value-super" style="color: var(--primar-success); font-size: 1.3rem; font-weight: 700;">$@Model.MontoTotal.ToString("N0")</p>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label class="label-super">DESCRIPCIÓN</label>
+                        <p class="value-super" style="background: var(--primar-secondary); padding: 12px; border-radius: var(--primar-radius-sm);">@Model.Descripcion</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Información Personal -->
+            <div class="card-super" style="background: var(--primar-white); border-radius: 16px; box-shadow: 0 2px 12px 0 rgba(31,90,136,0.08); padding: 28px 28px 18px 28px; border: none;">
+                <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--primar-text); margin: 0 0 18px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-user" style="font-size: 1.1rem; color: var(--primar-primary);"></i>
+                    Información Personal
+                </h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+                    <div>
+                        <label class="label-super">NOMBRE COMPLETO</label>
+                        <p class="value-super">@(string.IsNullOrEmpty(Model.Apellidos) ? "No especificado" : Model.Nombre + " " + Model.Apellidos)</p>
+                    </div>
+                    <div>
+                        <label class="label-super">RUT</label>
+                        <p class="value-super">@(string.IsNullOrEmpty(Model.Rut) ? "No especificado" : Model.Rut)</p>
+                    </div>
+                    <div>
+                        <label class="label-super">EMAIL</label>
+                        <p class="value-super">@Model.Usuario.Email</p>
+                    </div>
+                    <div>
+                        <label class="label-super">TELÉFONO</label>
+                        <p class="value-super">@(string.IsNullOrEmpty(Model.Telefono) ? "No especificado" : Model.Telefono)</p>
+                    </div>
+                    <div>
+                        <label class="label-super">CARGO</label>
+                        <p class="value-super">@(string.IsNullOrEmpty(Model.Cargo) ? "No especificado" : Model.Cargo)</p>
+                    </div>
+                    <div>
+                        <label class="label-super">DEPARTAMENTO</label>
+                        <p class="value-super">@(string.IsNullOrEmpty(Model.Departamento) ? "No especificado" : Model.Departamento)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Archivos Adjuntos -->
+            @if (Model.ArchivosAdjuntos.Any())
+            {
+                <div class="card-super" style="background: var(--primar-white); border-radius: 16px; box-shadow: 0 2px 12px 0 rgba(31,90,136,0.08); padding: 28px 28px 18px 28px; border: none;">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--primar-text); margin: 0 0 18px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-paperclip" style="font-size: 1.1rem; color: var(--primar-primary);"></i>
+                        Documentos Adjuntos
+                    </h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;">
+                        @foreach (var archivo in Model.ArchivosAdjuntos)
+                        {
+                            <div style="background: var(--primar-secondary); border-radius: var(--primar-radius-sm); padding: 12px; border: none; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-file" style="color: var(--primar-primary); font-size: 1.1rem;"></i>
+                                <div style="flex: 1;">
+                                    <p style="font-weight: 500; color: var(--primar-text); margin: 0; font-size: 0.95rem;">@archivo.NombreArchivo</p>
+                                    <p style="color: var(--primar-text-light); margin: 2px 0 0 0; font-size: 0.8rem;">@archivo.TipoArchivo • @((archivo.TamanoArchivo / 1024.0 / 1024.0).ToString("F2")) MB</p>
+                                </div>
+                                <a href="@Url.Action("DescargarArchivo", "Rendiciones", new { id = archivo.Id })" 
+                                   style="color: var(--primar-primary); text-decoration: none; padding: 6px; border-radius: 50%; transition: var(--primar-transition);" 
+                                   onmouseover="this.style.background='rgba(37, 99, 235, 0.1)'" 
+                                   onmouseout="this.style.background='transparent'">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        
+        <!-- Sidebar -->
+        <div style="display: flex; flex-direction: column; gap: 32px;">
+            <!-- Estado y Acciones SOLO PARA EMPLEADO -->
+            <div class="card-super" style="background: var(--primar-white); border-radius: 16px; box-shadow: 0 2px 12px 0 rgba(31,90,136,0.08); padding: 28px 28px 18px 28px; border: none;">
+                <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--primar-text); margin: 0 0 18px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-cogs" style="font-size: 1rem; color: var(--primar-primary);"></i>
+                    Estado y Acciones
+                </h2>
+                <div style="margin-bottom: 18px;">
+                    <div class="status-badge status-@claseEstado" style="width: 100%; justify-content: center; font-size: 1.1rem; padding: 12px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-circle"></i>
+                        @textoEstado
+                    </div>
+                </div>
+                @if (Model.Estado == "pendiente")
+                {
+                    <div>
+                        <a href="@Url.Action("Editar", "Rendiciones", new { id = Model.Id })" class="btn-action btn-secondary" style="width: 100%; justify-content: center;">
+                            <i class="fas fa-edit"></i>
+                            Editar Rendición
+                        </a>
+                    </div>
+                }
+                else if (Model.Estado == "rechazado" || Model.Estado == "rechazado_1")
+                {
+                    <div>
+                        <a href="@Url.Action("Crear", "Rendiciones")" class="btn-action btn-primary" style="width: 100%; justify-content: center;">
+                            <i class="fas fa-redo"></i>
+                            Crear Nueva Rendición
+                        </a>
+                    </div>
+                }
+            </div>
+            
+            <!-- Seguimiento del Proceso -->
+            <div class="card-super" style="background: var(--primar-white); border-radius: 16px; box-shadow: 0 2px 12px 0 rgba(31,90,136,0.08); padding: 28px 28px 18px 28px; border: none;">
+                <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--primar-text); margin: 0 0 18px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-clock" style="font-size: 1rem; color: var(--primar-primary);"></i>
+                    Seguimiento del Proceso
+                </h2>
+                <div style="display: flex; flex-direction: column; gap: 18px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-flag-checkered" style="color: var(--primar-primary); font-size: 1rem;"></i>
+                        <div style="flex: 1;">
+                            <p style="font-weight: 600; color: var(--primar-text); margin: 0; font-size: 1rem;">Primera Revisión</p>
+                            <p style="color: var(--primar-text-light); margin: 2px 0 0 0; font-size: 0.9rem;">
+                                @if (Model.Estado == "pendiente")
+                                {
+                                    <span style="color: var(--primar-warning);">En revisión</span>
+                                }
+                                else if (Model.Estado == "rechazado" || Model.Estado == "rechazado_1")
+                                {
+                                    <span style="color: var(--primar-danger);">Rechazado</span>
+                                }
+                                else
+                                {
+                                    <span style="color: var(--primar-success);">Aprobado</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-user-check" style="color: var(--primar-primary); font-size: 1rem;"></i>
+                        <div style="flex: 1;">
+                            <p style="font-weight: 600; color: var(--primar-text); margin: 0; font-size: 1rem;">Revisión Final</p>
+                            <p style="color: var(--primar-text-light); margin: 2px 0 0 0; font-size: 0.9rem;">
+                                @if (Model.Estado == "pendiente")
+                                {
+                                    <span style="color: var(--primar-text-light);">En espera</span>
+                                }
+                                else if (Model.Estado == "aprobado_1")
+                                {
+                                    <span style="color: var(--primar-warning);">En revisión</span>
+                                }
+                                else if (Model.Estado == "rechazado")
+                                {
+                                    <span style="color: var(--primar-danger);">Rechazado</span>
+                                }
+                                else if (Model.Estado == "aprobado_2" || Model.Estado == "pagado")
+                                {
+                                    <span style="color: var(--primar-success);">Aprobado</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-credit-card" style="color: var(--primar-primary); font-size: 1rem;"></i>
+                        <div style="flex: 1;">
+                            <p style="font-weight: 600; color: var(--primar-text); margin: 0; font-size: 1rem;">Procesamiento de Pago</p>
+                            <p style="color: var(--primar-text-light); margin: 2px 0 0 0; font-size: 0.9rem;">
+                                @if (Model.Estado == "rechazado")
+                                {
+                                    <span style="color: var(--primar-danger);">Rechazado</span>
+                                }
+                                else if (Model.Estado == "pagado")
+                                {
+                                    <span style="color: var(--primar-success);">Completado</span>
+                                }
+                                else
+                                {
+                                    <span style="color: var(--primar-text-light);">En espera</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if ((Model.Estado == "rechazado" || Model.Estado == "rechazado_1") &&
+                (!string.IsNullOrWhiteSpace(Model.ComentariosAprobador) || !string.IsNullOrWhiteSpace(Model.MotivoRechazoSupervisor) || !string.IsNullOrWhiteSpace(Model.MotivoRechazoGerente)))
+            {
+                <div class="card-super" style="background: #fff0f0; border-radius: 16px; box-shadow: 0 2px 12px 0 rgba(239,68,68,0.08); padding: 24px; border: 1px solid #ef4444; margin-top: 24px; width: 100%; max-width: none;">
+                    <h2 style="font-size: 1.1rem; font-weight: 700; color: #991b1b; margin: 0 0 12px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i>
+                        Motivo del Rechazo
+                    </h2>
+                    @if (!string.IsNullOrWhiteSpace(Model.ComentariosAprobador))
+                    {
+                        <div style="color: #991b1b; font-size: 1rem; white-space: pre-line; margin-bottom: 8px;">@Model.ComentariosAprobador</div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.MotivoRechazoSupervisor))
+                    {
+                        <div style="color: #991b1b; font-size: 1rem; white-space: pre-line; margin-bottom: 8px;">@Model.MotivoRechazoSupervisor</div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.MotivoRechazoGerente))
+                    {
+                        <div style="color: #991b1b; font-size: 1rem; white-space: pre-line;">@Model.MotivoRechazoGerente</div>
+                    }
+                </div>
+            }
+        </div> <!-- Fin columna derecha -->
+    </div>
+</div> 
+
+<div style="text-align:center;color:#64748b;font-size:0.98rem;margin:32px 0 12px 0;opacity:0.85;">
+    Todos los derechos reservados 
+</div> 

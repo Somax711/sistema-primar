@@ -1,0 +1,405 @@
+@model IEnumerable<RendicionesPrimar.Models.Notificacion>
+@{
+    ViewData["Title"] = "Notificaciones";
+}
+
+<style>
+    .notifications-header {
+        background: var(--primar-white);
+        border-radius: var(--primar-radius);
+        box-shadow: var(--primar-shadow);
+        padding: 6px !important;
+        margin-bottom: 6px !important;
+        border-left: 5px solid var(--primar-primary);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .notifications-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 200px;
+        height: 200px;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+        border-radius: 50%;
+        transform: translate(50%, -50%);
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    .header-title {
+        font-size: 1rem !important;
+        font-weight: 700;
+        color: var(--primar-text);
+        margin: 0;
+        background: var(--primar-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .header-subtitle {
+        color: var(--primar-text-light);
+        margin: 8px 0 0 0;
+        font-size: 0.6rem !important;
+    }
+
+    .notifications-container {
+        background: var(--primar-white);
+        border-radius: 4px !important;
+        box-shadow: var(--primar-shadow);
+        overflow: hidden;
+        border: 1px solid var(--primar-border);
+    }
+
+    .notifications-list {
+        max-height: 180px !important;
+        overflow-y: auto;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 2px !important;
+        min-height: 0 !important;
+        border-bottom: 1px solid var(--primar-border);
+        transition: var(--primar-transition);
+        position: relative;
+    }
+
+    .notification-item:hover {
+        background: var(--primar-secondary);
+    }
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+
+    .notification-icon {
+        width: 18px !important;
+        height: 18px !important;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 3px !important;
+        flex-shrink: 0;
+        font-size: 0.6rem !important;
+        color: white;
+    }
+
+    .icon-pending {
+        background: linear-gradient(135deg, var(--primar-warning) 0%, #d97706 100%);
+    }
+
+    .icon-approved {
+        background: linear-gradient(135deg, var(--primar-success) 0%, #059669 100%);
+    }
+
+    .icon-completed {
+        background: linear-gradient(135deg, var(--primar-info) 0%, #0891b2 100%);
+    }
+
+    .icon-rejected {
+        background: linear-gradient(135deg, var(--primar-danger) 0%, #dc2626 100%);
+    }
+
+    .icon-info {
+        background: linear-gradient(135deg, var(--primar-primary) 0%, var(--primar-primary-light) 100%);
+    }
+
+    .notification-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+    }
+
+    .notification-type {
+        font-weight: 600;
+        color: var(--primar-text);
+        font-size: 0.55rem !important;
+    }
+
+    .notification-time {
+        font-size: 0.5rem !important;
+        color: var(--primar-text-light);
+        font-weight: 500;
+    }
+
+    .notification-message {
+        color: var(--primar-text);
+        line-height: 1.6;
+        margin-bottom: 2px !important;
+        font-size: 0.5rem !important;
+    }
+
+    .notification-actions {
+        display: flex;
+        gap: 2px !important;
+    }
+
+    .notification-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 2px 4px !important;
+        background: var(--primar-gradient);
+        color: white;
+        text-decoration: none;
+        border-radius: var(--primar-radius-sm);
+        font-size: 0.5rem !important;
+        font-weight: 500;
+        transition: var(--primar-transition);
+    }
+
+    .notification-link:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .empty-notifications {
+        background: var(--primar-white);
+        border-radius: var(--primar-radius);
+        box-shadow: var(--primar-shadow);
+        padding: 8px 4px !important;
+        text-align: center;
+        border: 2px dashed var(--primar-border);
+    }
+
+    .empty-icon {
+        font-size: 0.7rem !important;
+        color: var(--primar-text-light);
+        margin-bottom: 2px !important;
+    }
+
+    .empty-title {
+        font-size: 0.5rem !important;
+        font-weight: 600;
+        color: var(--primar-text);
+        margin-bottom: 2px !important;
+    }
+
+    .empty-description {
+        color: var(--primar-text-light);
+        font-size: 0.4rem !important;
+        line-height: 1.6;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--primar-danger);
+    }
+
+    .notification-badge.unread {
+        background: var(--primar-danger);
+    }
+
+    .notification-badge.read {
+        background: var(--primar-text-light);
+    }
+
+    @@media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .notification-item {
+            padding: 20px;
+        }
+
+        .notification-header {
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .notification-actions {
+            flex-direction: column;
+        }
+
+        .notification-link {
+            justify-content: center;
+        }
+    }
+
+    @@keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<!-- Header de Notificaciones -->
+<div class="notifications-header">
+    <div class="header-content">
+        <div>
+            <h1 class="header-title">
+                <i class="fas fa-bell" style="margin-right: 12px;"></i>
+                Centro de Notificaciones
+            </h1>
+            <p class="header-subtitle">
+                Mantén un seguimiento completo de las actualizaciones del sistema
+            </p>
+        </div>
+        
+        <div>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Volver al Inicio
+            </a>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.NotificacionesNoLeidas > 0)
+{
+    <div class="alert alert-warning" style="margin-bottom: 24px; font-size: 1rem;">
+        <i class="fas fa-exclamation-triangle"></i>
+        ¡Tienes notificaciones sin leer! Haz clic en "Ver rendición" para revisarlas.
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="empty-notifications">
+        <div class="empty-icon">
+            <i class="fas fa-bell-slash"></i>
+        </div>
+        <div class="empty-title">No hay notificaciones</div>
+        <div class="empty-description">
+            Tu bandeja de notificaciones está vacía. Cuando tengas actualizaciones sobre tus rendiciones, aparecerán aquí.
+        </div>
+    </div>
+}
+else
+{
+    <div class="notifications-container">
+        <div class="notifications-list">
+            @foreach (var notificacion in Model)
+            {
+                <div class="notification-item fade-in-up">
+                    <div class="notification-badge @(notificacion.Leido ? "read" : "unread")"></div>
+                    
+                    <div class="notification-icon icon-@GetNotificationClass(notificacion.Mensaje)">
+                        <i class="fas @GetNotificationIcon(notificacion.Mensaje)"></i>
+                    </div>
+                    
+                    <div class="notification-content">
+                        <div class="notification-header">
+                            <div class="notification-type">
+                                @GetNotificationTypeLabel(notificacion.Mensaje)
+                            </div>
+                            <div class="notification-time">
+                                @GetTimeAgo(notificacion.FechaCreacion)
+                            </div>
+                        </div>
+                        
+                        <div class="notification-message">
+                            @notificacion.Mensaje
+                        </div>
+                        
+                        @if (notificacion.Rendicion != null)
+                        {
+                            <div class="notification-actions">
+                                <form asp-action="MarcarNotificacionLeidaYVer" asp-controller="Home" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@notificacion.Id" />
+                                    <button type="submit" class="notification-link">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        Ver rendición @notificacion.Rendicion.NumeroTicket
+                                    </button>
+                                </form>
+                                <form asp-action="EliminarNotificacion" asp-controller="Home" method="post" style="display:inline; margin-left:8px;">
+                                    <input type="hidden" name="id" value="@notificacion.Id" />
+                                    <button type="submit" title="Eliminar" style="background:none; border:none; color:#dc2626; font-size:1.2rem; cursor:pointer;">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@functions {
+    string GetNotificationClass(string mensaje)
+    {
+        if (mensaje.Contains("requiere aprobación") || mensaje.Contains("Nueva rendición"))
+            return "pending";
+        if (mensaje.Contains("aprobada") || mensaje.Contains("autorizada"))
+            return "approved";
+        if (mensaje.Contains("pagada") || mensaje.Contains("✓✓"))
+            return "completed";
+        if (mensaje.Contains("rechazada"))
+            return "rejected";
+        return "info";
+    }
+    
+    string GetNotificationIcon(string mensaje)
+    {
+        if (mensaje.Contains("requiere aprobación") || mensaje.Contains("Nueva rendición"))
+            return "fa-exclamation-triangle";
+        if (mensaje.Contains("aprobada") || mensaje.Contains("autorizada"))
+            return "fa-check-circle";
+        if (mensaje.Contains("pagada") || mensaje.Contains("✓✓"))
+            return "fa-credit-card";
+        if (mensaje.Contains("rechazada"))
+            return "fa-times-circle";
+        return "fa-info-circle";
+    }
+    
+    string GetNotificationTypeLabel(string mensaje)
+    {
+        if (mensaje.Contains("requiere aprobación") || mensaje.Contains("Nueva rendición"))
+            return "Acción Requerida";
+        if (mensaje.Contains("aprobada") || mensaje.Contains("autorizada"))
+            return "Actualización de Estado";
+        if (mensaje.Contains("pagada") || mensaje.Contains("✓✓"))
+            return "Proceso Completado";
+        if (mensaje.Contains("rechazada"))
+            return "Solicitud Rechazada";
+        return "Información";
+    }
+    
+    string GetTimeAgo(DateTime fecha)
+    {
+        var timeSpan = DateTime.Now - fecha;
+        
+        if (timeSpan.TotalMinutes < 1)
+            return "Hace un momento";
+        if (timeSpan.TotalMinutes < 60)
+            return $"Hace {(int)timeSpan.TotalMinutes} min";
+        if (timeSpan.TotalHours < 24)
+            return $"Hace {(int)timeSpan.TotalHours}h";
+        if (timeSpan.TotalDays < 7)
+            return $"Hace {(int)timeSpan.TotalDays}d";
+        
+        return fecha.ToString("dd/MM/yyyy");
+    }
+}

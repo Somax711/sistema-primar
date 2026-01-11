@@ -1,0 +1,736 @@
+@model RendicionesPrimar.Models.ViewModels.RendicionDetalleViewModel
+@{
+    ViewData["Title"] = $"Rendición #{Model.NumeroTicket} - Revisión Gerente";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string claseEstado = Model.Estado switch {
+        "aprobado" or "aprobado_1" or "aprobado_2" => "aprobado",
+        "rechazado" or "rechazado_1" => "rechazado",
+        "pendiente" => "pendiente",
+        "pagado" => "pagado",
+        _ => "pendiente"
+    };
+    string textoEstado = Model.Estado.ToUpperInvariant().Replace("_", " ");
+}
+
+<style>
+:root {
+    --primar-primary: #215c8e;
+    --primar-primary-dark: #1a4b73;
+    --primar-primary-light: #357ab7;
+    --primar-secondary: #f1f5f9;
+    --primar-success: #10b981;
+    --primar-warning: #f59e0b;
+    --primar-danger: #ef4444;
+    --primar-info: #06b6d4;
+    --primar-text: #1e293b;
+    --primar-text-light: #64748b;
+    --primar-background: #f8fafc;
+    --primar-white: #ffffff;
+    --primar-border: #e2e8f0;
+    --primar-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --primar-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --primar-radius: 12px;
+    --primar-radius-sm: 8px;
+    --primar-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --primar-gradient: linear-gradient(135deg, var(--primar-primary) 0%, var(--primar-primary-light) 100%);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--primar-background);
+    color: var(--primar-text);
+    line-height: 1.6;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.main-super-container {
+    max-width: 1200px;
+    margin: 48px auto 0 auto;
+    padding: 0 24px;
+}
+
+.card-super {
+    background: var(--primar-white);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px 0 rgba(33, 92, 142, 0.10);
+    border: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-super:hover {
+    box-shadow: 0 8px 40px 0 rgba(33, 92, 142, 0.15);
+    transform: translateY(-2px);
+}
+
+.label-super {
+    font-weight: 700;
+    color: var(--primar-text-light);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.value-super {
+    font-size: 1.1rem;
+    color: var(--primar-text);
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.btn-action {
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-action::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+}
+
+.btn-action:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--primar-success) 0%, #059669 100%);
+    color: white;
+}
+
+.btn-success:hover {
+    background: #059669;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--primar-danger) 0%, #dc2626 100%);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--primar-secondary) 0%, #e2e8f0 100%);
+    color: var(--primar-text);
+    border: 1px solid var(--primar-border);
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+    color: var(--primar-text);
+    text-decoration: none;
+}
+
+.status-badge {
+    border-radius: 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 12px 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.status-aprobado {
+    background: linear-gradient(135deg, var(--primar-success) 0%, #059669 100%);
+    color: white;
+}
+
+.status-rechazado {
+    background: linear-gradient(135deg, var(--primar-danger) 0%, #dc2626 100%);
+    color: white;
+}
+
+.status-pendiente {
+    background: linear-gradient(135deg, var(--primar-warning) 0%, #d97706 100%);
+    color: white;
+}
+
+.status-pagado {
+    background: linear-gradient(135deg, var(--primar-info) 0%, #0891b2 100%);
+    color: white;
+}
+
+.modal-rechazo-bg {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.modal-rechazo-bg.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+}
+
+.modal-rechazo {
+    background: var(--primar-white);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    padding: 32px;
+    width: 90%;
+    max-width: 500px;
+    transform: translateY(-20px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-rechazo-bg.show .modal-rechazo {
+    transform: translateY(0) scale(1);
+}
+
+.modal-rechazo h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primar-text);
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modal-rechazo h3::before {
+    content: '';
+    width: 40px;
+    height: 40px;
+    background: var(--primar-danger);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    content: '\f071';
+}
+
+.modal-rechazo textarea {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid var(--primar-border);
+    border-radius: var(--primar-radius);
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 120px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.modal-rechazo textarea:focus {
+    outline: none;
+    border-color: var(--primar-primary);
+    box-shadow: 0 0 0 3px rgba(33, 92, 142, 0.1);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cards de rechazo rediseñadas */
+.rechazo-card {
+    background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px 0 rgba(239, 68, 68, 0.15);
+    padding: 24px;
+    border: 2px solid rgba(239, 68, 68, 0.2);
+    margin: 24px auto;
+    max-width: 600px;
+    position: relative;
+    overflow: hidden;
+}
+
+.rechazo-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primar-danger);
+}
+
+.rechazo-card h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #991b1b;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rechazo-card h2 i {
+    color: var(--primar-danger);
+    font-size: 1.1rem;
+    padding: 8px;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 50%;
+}
+
+.rechazo-card div {
+    color: #991b1b;
+    font-size: 1rem;
+    line-height: 1.6;
+    white-space: pre-line;
+    font-weight: 500;
+}
+
+/* Responsive */
+@@media (max-width: 1024px) {
+    .main-super-container {
+        padding: 0 16px;
+    }
+    
+    .card-super {
+        padding: 24px !important;
+    }
+}
+
+@@media (max-width: 768px) {
+    .main-super-container {
+        padding: 0 12px;
+        margin-top: 24px;
+    }
+    
+    .card-super {
+        padding: 20px !important;
+    }
+    
+    .card-super[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+    }
+    
+    .card-super[style*="display: flex"] {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        text-align: left !important;
+    }
+    
+    .modal-rechazo {
+        width: 95%;
+        padding: 24px;
+    }
+}
+
+@@media (max-width: 480px) {
+    .main-super-container {
+        padding: 0 8px;
+    }
+    
+    .card-super {
+        padding: 16px !important;
+    }
+    
+    .btn-action {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .modal-actions .btn-action {
+        width: 100%;
+    }
+}
+</style>
+
+<div class="main-super-container">
+    <!-- Tarjeta principal de la rendición -->
+    <div class="card-super fade-in-up" style="padding: 36px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <h1 style="font-size: 2.3rem; font-weight: 800; color: var(--primar-text); margin: 0; letter-spacing: 0.01em; display: flex; align-items: center; gap: 16px;">
+                <i class="fas fa-file-invoice-dollar" style="font-size: 2rem; color: var(--primar-primary);"></i>
+                Rendición #@Model.NumeroTicket
+            </h1>
+            <p style="color: var(--primar-text-light); margin: 0; font-size: 1.2rem; font-weight: 500;">@Model.Titulo</p>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                <span style="background: linear-gradient(135deg, var(--primar-primary) 0%, var(--primar-primary-light) 100%); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <i class="fas fa-crown" style="margin-right: 4px;"></i>
+                    Revisión Final
+                </span>
+            </div>
+        </div>
+        <div style="text-align: right; min-width: 220px;">
+            <div class="status-badge status-@claseEstado" style="margin-bottom: 12px;">
+                <i class="fas fa-circle"></i>
+                @textoEstado
+            </div>
+            <div style="color: var(--primar-text-light); font-size: 1rem; font-weight: 600;">
+                Creada el @Model.FechaCreacion.ToString("dd/MM/yyyy 'a las' HH:mm")
+            </div>
+        </div>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: flex-start;">
+        <!-- Columna Principal -->
+        <div style="display: flex; flex-direction: column; gap: 32px;">
+            <!-- Información de la Rendición -->
+            <div class="card-super" style="padding: 32px;">
+                <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--primar-text); margin: 0 0 24px 0; display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-info-circle" style="font-size: 1.2rem; color: var(--primar-primary);"></i>
+                    Información de la Rendición
+                </h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <div>
+                        <label class="label-super">TÍTULO</label>
+                        <p class="value-super">@Model.Titulo</p>
+                    </div>
+                    <div>
+                        <label class="label-super">MONTO TOTAL</label>
+                        <p class="value-super" style="color: var(--primar-success); font-size: 1.4rem; font-weight: 700;">$@Model.MontoTotal.ToString("N0")</p>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label class="label-super">DESCRIPCIÓN</label>
+                        <p class="value-super" style="background: var(--primar-secondary); padding: 16px; border-radius: var(--primar-radius); line-height: 1.6;">@Model.Descripcion</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Información del Empleado -->
+            <div class="card-super" style="padding: 32px;">
+                <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--primar-text); margin: 0 0 24px 0; display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-user" style="font-size: 1.2rem; color: var(--primar-primary);"></i>
+                    Información del Empleado
+                </h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <div>
+                        <label class="label-super">NOMBRE COMPLETO</label>
+                        <p class="value-super">@(string.IsNullOrEmpty(Model.Apellidos) ? "No especificado" : Model.Nombre + " " + Model.Apellidos)</p>
+                    </div>
+                    <div>
+                        <label class="label-super">RUT</label>
+                        <p class="value-super">@(string.IsNullOrEmpty(Model.Rut) ? "No especificado" : Model.Rut)</p>
+                    </div>
+                    <div>
+                        <label class="label-super">EMAIL</label>
+                        <p class="value-super">@Model.Usuario.Email</p>
+                    </div>
+                    <div>
+                        <label class="label-super">TELÉFONO</label>
+                        <p class="value-super">@(string.IsNullOrEmpty(Model.Telefono) ? "No especificado" : Model.Telefono)</p>
+                    </div>
+                    <div>
+                        <label class="label-super">CARGO</label>
+                        <p class="value-super">@(string.IsNullOrEmpty(Model.Cargo) ? "No especificado" : Model.Cargo)</p>
+                    </div>
+                    <div>
+                        <label class="label-super">DEPARTAMENTO</label>
+                        <p class="value-super">@(string.IsNullOrEmpty(Model.Departamento) ? "No especificado" : Model.Departamento)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Archivos Adjuntos -->
+            @if (Model.ArchivosAdjuntos.Any())
+            {
+                <div class="card-super" style="padding: 32px;">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--primar-text); margin: 0 0 24px 0; display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-paperclip" style="font-size: 1.2rem; color: var(--primar-primary);"></i>
+                        Documentos Adjuntos
+                    </h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                        @foreach (var archivo in Model.ArchivosAdjuntos)
+                        {
+                            <div style="background: var(--primar-secondary); border-radius: var(--primar-radius); padding: 16px; border: none; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='var(--primar-secondary)'">
+                                <i class="fas fa-file" style="color: var(--primar-primary); font-size: 1.5rem; padding: 12px; background: rgba(33, 92, 142, 0.1); border-radius: 50%;"></i>
+                                <div style="flex: 1;">
+                                    <p style="font-weight: 600; color: var(--primar-text); margin: 0; font-size: 1rem;">@archivo.NombreArchivo</p>
+                                    <p style="color: var(--primar-text-light); margin: 4px 0 0 0; font-size: 0.85rem;">@archivo.TipoArchivo • @((archivo.TamanoArchivo / 1024.0 / 1024.0).ToString("F2")) MB</p>
+                                </div>
+                                <a href="@Url.Action("DescargarArchivo", "Rendiciones", new { id = archivo.Id })" 
+                                   style="color: var(--primar-primary); text-decoration: none; padding: 10px; border-radius: 50%; transition: all 0.3s ease; background: rgba(33, 92, 142, 0.1);" 
+                                   onmouseover="this.style.background='rgba(33, 92, 142, 0.2)'; this.style.transform='scale(1.1)'" 
+                                   onmouseout="this.style.background='rgba(33, 92, 142, 0.1)'; this.style.transform='scale(1)'">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        
+        <!-- Sidebar -->
+        <div style="display: flex; flex-direction: column; gap: 32px;">
+            <!-- Estado y Acciones PARA GERENTE -->
+            <div class="card-super" style="padding: 32px;">
+                <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--primar-text); margin: 0 0 24px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-cogs" style="font-size: 1.1rem; color: var(--primar-primary);"></i>
+                    Acciones de Gerente
+                </h2>
+                @if (Model.Estado == "aprobado_1" || Model.Estado == "rechazado_1")
+                {
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <form asp-action="AprobarRendicion" asp-controller="Gerentes" asp-route-id="@Model.Id" method="post" style="width: 100%;">
+                            <button type="submit" class="btn-action btn-success" style="width: 100%; justify-content: center; font-size: 1.1rem; padding: 16px;">
+                                <i class="fas fa-check-double"></i> 
+                                Aprobar Finalmente
+                            </button>
+                        </form>
+                        <button type="button" class="btn-action btn-danger" style="width: 100%; justify-content: center; font-size: 1.1rem; padding: 16px;" onclick="abrirModalRechazo()">
+                            <i class="fas fa-times-circle"></i> 
+                            Rechazar Rendición
+                        </button>
+                    </div>
+                }
+                else if (Model.Estado == "pendiente")
+                {
+                    <div style="text-align: center; color: var(--primar-text-light); font-size: 1rem; padding: 20px; background: var(--primar-secondary); border-radius: var(--primar-radius);">
+                        <i class="fas fa-clock" style="font-size: 1.5rem; margin-bottom: 8px; display: block; color: var(--primar-warning);"></i>
+                        Esperando aprobación del supervisor
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center; color: var(--primar-text-light); font-size: 1rem; padding: 20px; background: var(--primar-secondary); border-radius: var(--primar-radius);">
+                        <i class="fas fa-check-circle" style="font-size: 1.5rem; margin-bottom: 8px; display: block; color: var(--primar-success);"></i>
+                        Esta rendición ya ha sido procesada
+                    </div>
+                }
+            </div>
+            
+            <!-- Seguimiento del Proceso -->
+            <div class="card-super" style="padding: 32px;">
+                <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--primar-text); margin: 0 0 24px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-route" style="font-size: 1.1rem; color: var(--primar-primary);"></i>
+                    Seguimiento del Proceso
+                </h2>
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--primar-radius); background: var(--primar-secondary);">
+                        <i class="fas fa-flag-checkered" style="color: var(--primar-primary); font-size: 1.2rem; padding: 8px; background: rgba(33, 92, 142, 0.1); border-radius: 50%;"></i>
+                        <div style="flex: 1;">
+                            <p style="font-weight: 600; color: var(--primar-text); margin: 0; font-size: 1rem;">Primera Revisión</p>
+                            <p style="color: var(--primar-text-light); margin: 4px 0 0 0; font-size: 0.9rem;">
+                                @if (Model.Estado == "pendiente")
+                                {
+                                    <span style="color: var(--primar-warning); font-weight: 600;">⏳ En revisión</span>
+                                }
+                                else if (Model.Estado == "rechazado" || Model.Estado == "rechazado_1")
+                                {
+                                    <span style="color: var(--primar-danger); font-weight: 600;">❌ Rechazado</span>
+                                }
+                                else
+                                {
+                                    <span style="color: var(--primar-success); font-weight: 600;">✅ Aprobado</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--primar-radius); background: var(--primar-secondary);">
+                        <i class="fas fa-user-check" style="color: var(--primar-primary); font-size: 1.2rem; padding: 8px; background: rgba(33, 92, 142, 0.1); border-radius: 50%;"></i>
+                        <div style="flex: 1;">
+                            <p style="font-weight: 600; color: var(--primar-text); margin: 0; font-size: 1rem;">Aprobación Final</p>
+                            <p style="color: var(--primar-text-light); margin: 4px 0 0 0; font-size: 0.9rem;">
+                                @if (Model.Estado == "pendiente")
+                                {
+                                    <span style="color: var(--primar-text-light); font-weight: 600;">⏸️ En espera</span>
+                                }
+                                else if (Model.Estado == "aprobado_1")
+                                {
+                                    <span style="color: var(--primar-warning); font-weight: 600;">⏳ En revisión</span>
+                                }
+                                else if (Model.Estado == "rechazado")
+                                {
+                                    <span style="color: var(--primar-danger); font-weight: 600;">❌ Rechazado</span>
+                                }
+                                else if (Model.Estado == "aprobado_2" || Model.Estado == "pagado")
+                                {
+                                    <span style="color: var(--primar-success); font-weight: 600;">✅ Aprobado</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--primar-radius); background: var(--primar-secondary);">
+                        <i class="fas fa-credit-card" style="color: var(--primar-primary); font-size: 1.2rem; padding: 8px; background: rgba(33, 92, 142, 0.1); border-radius: 50%;"></i>
+                        <div style="flex: 1;">
+                            <p style="font-weight: 600; color: var(--primar-text); margin: 0; font-size: 1rem;">Procesamiento de Pago</p>
+                            <p style="color: var(--primar-text-light); margin: 4px 0 0 0; font-size: 0.9rem;">
+                                @if (Model.Estado == "rechazado")
+                                {
+                                    <span style="color: var(--primar-danger); font-weight: 600;">❌ Rechazado</span>
+                                }
+                                else if (Model.Estado == "pagado")
+                                {
+                                    <span style="color: var(--primar-success); font-weight: 600;">💰 Completado</span>
+                                }
+                                else
+                                {
+                                    <span style="color: var(--primar-text-light); font-weight: 600;">⏸️ En espera</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cards de rechazo modernizadas -->
+@if (!string.IsNullOrWhiteSpace(Model.MotivoRechazoSupervisor) && (Model.Estado == "rechazado" || Model.Estado == "rechazado_1"))
+{
+    <div class="rechazo-card fade-in-up">
+        <h2>
+            <i class="fas fa-user-tie"></i>
+            Motivo de Rechazo del Supervisor
+        </h2>
+        <div>@Model.MotivoRechazoSupervisor</div>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.MotivoRechazoGerente) && Model.Estado == "rechazado")
+{
+    <div class="rechazo-card fade-in-up">
+        <h2>
+            <i class="fas fa-user-shield"></i>
+            Motivo de Rechazo del Gerente
+        </h2>
+        <div>@Model.MotivoRechazoGerente</div>
+    </div>
+}
+
+<!-- Modal de rechazo modernizado -->
+@if (Model.Estado == "aprobado_1" || Model.Estado == "rechazado_1")
+{
+    <div id="modalRechazo" class="modal-rechazo-bg">
+        <div class="modal-rechazo">
+            <h3>Motivo del Rechazo</h3>
+            <p style="color: var(--primar-text-light); margin-bottom: 20px; line-height: 1.6;">
+                Por favor, indique el motivo detallado del rechazo de la rendición <strong>#@Model.NumeroTicket</strong>. 
+                Este comentario será enviado al empleado para que pueda corregir los problemas identificados.
+            </p>
+            <form id="formRechazo" asp-action="RechazarRendicion" asp-controller="Gerentes" asp-route-id="@Model.Id" method="post">
+                <div style="margin-bottom: 20px;">
+                    <label for="comentarios" style="font-weight: 600; color: var(--primar-text); margin-bottom: 8px; display: block;">
+                        Motivo del rechazo *
+                    </label>
+                    <textarea name="comentarios" id="comentarios" placeholder="Describa claramente los motivos del rechazo, incluyendo qué documentos faltan o qué información debe corregirse..." required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" onclick="cerrarModalRechazo()" class="btn-action btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-action btn-danger">
+                        <i class="fas fa-times-circle"></i>
+                        Rechazar Rendición
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+<script>
+function abrirModalRechazo() {
+    document.getElementById('modalRechazo').classList.add('show');
+    setTimeout(() => {
+        document.getElementById('comentarios').focus();
+    }, 300);
+}
+
+function cerrarModalRechazo() {
+    document.getElementById('modalRechazo').classList.remove('show');
+    document.getElementById('comentarios').value = '';
+}
+
+document.getElementById('formRechazo').addEventListener('submit', function(e) {
+    var comentarios = document.getElementById('comentarios').value.trim();
+    if (!comentarios) {
+        e.preventDefault();
+        alert('Por favor, indique el motivo del rechazo.');
+        document.getElementById('comentarios').focus();
+        return false;
+    }
+    if (comentarios.length < 10) {
+        e.preventDefault();
+        alert('Por favor, proporcione un motivo más detallado (mínimo 10 caracteres).');
+        document.getElementById('comentarios').focus();
+        return false;
+    }
+});
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('modalRechazo').addEventListener('click', function(e) {
+    if (e.target === this) {
+        cerrarModalRechazo();
+    }
+});
+
+// Cerrar modal con Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && document.getElementById('modalRechazo').classList.contains('show')) {
+        cerrarModalRechazo();
+    }
+});
+</script>
+<div style="text-align:center;color:#64748b;font-size:0.98rem;margin:32px 0 12px 0;opacity:0.85;">
+    Todos los derechos reservados - Catalina Núñez
+</div>

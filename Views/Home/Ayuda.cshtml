@@ -1,0 +1,243 @@
+@model RendicionesPrimar.Models.ViewModels.InformacionPersonalViewModel
+@{
+    ViewData["Title"] = "Ayuda para Gerentes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ayuda - Sistema de Rendiciones | Primar S.A.</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+    :root {
+        --primar-primary:rgb(31, 90, 136);
+        --primar-primary-dark:rgb(31, 90, 136);
+        --primar-primary-light: rgb(31, 90, 136);
+        --primar-secondary: #f1f5f9;
+        --primar-success: #10b981;
+        --primar-warning: #f59e0b;
+        --primar-danger: #ef4444;
+        --primar-info: #06b6d4;
+        --primar-text: #1e293b;
+        --primar-text-light: #64748b;
+        --primar-background: #f8fafc;
+        --primar-white: #ffffff;
+        --primar-border: #e2e8f0;
+        --primar-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --primar-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --primar-radius: 12px;
+        --primar-radius-sm: 8px;
+        --primar-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        --primar-gradient: linear-gradient(135deg, var(--primar-primary) 0%, var(--primar-primary-light) 100%);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: var(--primar-background);
+        color: var(--primar-text);
+        line-height: 1.6;
+        font-size: 15px;
+        font-weight: 400;
+    }
+    .app-container { min-height: 100vh; display: flex; flex-direction: column; }
+    .header { background: var(--primar-gradient); box-shadow: var(--primar-shadow); position: sticky; top: 0; z-index: 1000; }
+    .header-content { max-width: 1400px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; height: 70px; }
+    .brand { display: flex; align-items: center; color: white; gap: 12px; }
+    .brand i { font-size: 1.5rem; }
+    .brand-text h1 { font-size: 1.25rem; font-weight: 700; margin: 0; line-height: 1.2; }
+    .brand-text span { font-size: 0.75rem; opacity: 0.9; font-weight: 400; }
+    .nav { display: flex; align-items: center; gap: 8px; }
+    .nav-link {
+        color: rgba(255,255,255,0.95);
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: var(--primar-radius-sm);
+        font-weight: 500;
+        font-size: 0.78rem;
+        transition: var(--primar-transition);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+    }
+    .nav-link:hover { color: white; background-color: rgba(255,255,255,0.15); text-decoration: none; }
+    .nav-link.active { background-color: rgba(255,255,255,0.2); color: white; }
+    .badge { position: absolute; top: -4px; right: -4px; background: var(--primar-danger); color: white; font-size: 0.7rem; font-weight: 600; padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center; }
+    .user-section { display: flex; align-items: center; gap: 16px; padding-left: 24px; border-left: 1px solid rgba(255,255,255,0.2); }
+    .user-info { color: white; text-align: right; }
+    .user-name { display: block; font-weight: 500; font-size: 0.9rem; }
+    .user-role { display: inline-block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 8px; border-radius: 12px; margin-top: 2px; }
+    .role-gerente { background: rgba(16, 185, 129, 0.3); }
+    .btn-logout { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: var(--primar-radius-sm); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: var(--primar-transition); display: flex; align-items: center; gap: 8px; }
+    .btn-logout:hover { background: rgba(255,255,255,0.25); }
+    .main { flex: 1; padding: 40px 0; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+    @@media (max-width: 768px) {
+        .header-content { flex-direction: column; height: auto; padding: 16px 24px; gap: 16px; }
+        .nav { flex-wrap: wrap; justify-content: center; }
+        .user-section { border-left: none; border-top: 1px solid rgba(255,255,255,0.2); padding-left: 0; padding-top: 16px; }
+        .main { padding: 24px 0; }
+        .container { padding: 0 16px; }
+    }
+    @@media (max-width: 480px) {
+        .container { padding: 0 12px; }
+        .brand { flex-direction: column; gap: 4px; text-align: center; }
+        .nav { flex-direction: column; gap: 8px; }
+        .user-section { flex-direction: column; gap: 12px; }
+    }
+    </style>
+</head>
+<body>
+
+<style>
+    .help-header { background: var(--primar-white); border-radius: var(--primar-radius); box-shadow: var(--primar-shadow); padding: 32px; margin-bottom: 32px; border-left: 5px solid var(--primar-primary); position: relative; overflow: hidden; }
+    .help-header::before { content: ''; position: absolute; top: 0; right: 0; width: 200px; height: 200px; background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%); border-radius: 50%; transform: translate(50%, -50%); }
+    .header-content { position: relative; z-index: 1; }
+    .header-title { font-size: 2rem; font-weight: 700; color: var(--primar-text); margin: 0; background: var(--primar-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .header-subtitle { color: var(--primar-text-light); margin: 8px 0 0 0; font-size: 1rem; }
+    .help-container { display: grid; grid-template-columns: 300px 1fr; gap: 32px; margin-top: 24px; }
+    .help-nav { background: var(--primar-white); border-radius: var(--primar-radius); box-shadow: var(--primar-shadow); padding: 24px; height: fit-content; position: sticky; top: 100px; border: 1px solid var(--primar-border); }
+    .help-nav h3 { font-size: 1.2rem; font-weight: 600; color: var(--primar-text); margin: 0 0 20px 0; padding-bottom: 12px; border-bottom: 2px solid var(--primar-border); }
+    .help-topics { list-style: none; padding: 0; margin: 0; }
+    .help-topics li { margin-bottom: 8px; }
+    .help-topics li a { display: block; padding: 12px 16px; color: var(--primar-text); text-decoration: none; border-radius: var(--primar-radius-sm); transition: var(--primar-transition); font-weight: 500; font-size: 0.9rem; }
+    .help-topics li a:hover { background: var(--primar-gradient); color: white; text-decoration: none; transform: translateX(4px); }
+    .help-content { background: var(--primar-white); border-radius: var(--primar-radius); box-shadow: var(--primar-shadow); padding: 32px; border: 1px solid var(--primar-border); }
+    .help-section { margin-bottom: 48px; scroll-margin-top: 120px; }
+    .help-section:last-child { margin-bottom: 0; }
+    .help-section h2 { font-size: 1.5rem; font-weight: 600; color: var(--primar-text); margin: 0 0 24px 0; padding-bottom: 12px; border-bottom: 2px solid var(--primar-border); display: flex; align-items: center; gap: 12px; }
+    .help-section h2 i { color: var(--primar-primary); font-size: 1.3rem; }
+    .help-steps { display: flex; flex-direction: column; gap: 24px; }
+    .step { display: flex; align-items: flex-start; gap: 20px; padding: 24px; background: var(--primar-secondary); border-radius: var(--primar-radius); border-left: 4px solid var(--primar-primary); }
+    .step-number { width: 40px; height: 40px; background: var(--primar-gradient); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0; }
+    .step-content h4 { font-size: 1.1rem; font-weight: 600; color: var(--primar-text); margin: 0 0 8px 0; }
+    .step-content p { color: var(--primar-text-light); margin: 0; line-height: 1.6; }
+    .help-text { background: var(--primar-secondary); padding: 24px; border-radius: var(--primar-radius); border-left: 4px solid var(--primar-primary); }
+    .help-text ul { margin: 0; padding-left: 20px; }
+    .help-text li { color: var(--primar-text-light); margin-bottom: 8px; line-height: 1.6; }
+    .help-text li strong { color: var(--primar-text); font-weight: 600; }
+    .help-table { overflow-x:auto; margin-bottom: 16px; }
+    .help-table table { width:100%; border-collapse:collapse; }
+    .help-table th, .help-table td { padding:8px; border:1px solid #e2e8f0; }
+    .help-table thead { background:#2563eb; color:#fff; }
+    @@media (max-width: 1024px) { .help-container { grid-template-columns: 1fr; gap: 24px; } .help-nav { position: static; order: 2; } .help-content { order: 1; } }
+    @@media (max-width: 768px) { .step { flex-direction: column; text-align: center; } }
+</style>
+
+<div class="help-header">
+    <div class="header-content">
+        <h1 class="header-title">
+            <i class="fas fa-question-circle" style="margin-right: 12px;"></i>
+            Centro de Ayuda - Gerente
+        </h1>
+        <p class="header-subtitle">Guía rápida para la gestión y aprobación final de rendiciones como gerente.</p>
+    </div>
+</div>
+
+<div class="help-container fade-in-up">
+    <aside class="help-nav">
+        <h3>Temas de Ayuda</h3>
+        <ul class="help-topics">
+            <li><a href="#que-hace" class="help-link">¿Qué puede hacer un Gerente?</a></li>
+            <li><a href="#pasos" class="help-link">Pasos para aprobar/rechazar</a></li>
+            <li><a href="#tabla" class="help-link">Ejemplo de tabla</a></li>
+            <li><a href="#flujo" class="help-link">¿Qué pasa si apruebo o rechazo?</a></li>
+        </ul>
+    </aside>
+    <main class="help-content">
+        <section id="que-hace" class="help-section">
+            <h2><i class="fas fa-list"></i> ¿Qué puede hacer un Gerente?</h2>
+            <div class="help-text">
+                <ul>
+                    <li>Ver la lista de <strong>Rendiciones en Espera de Aprobación Final</strong>.</li>
+                    <li>Revisar el detalle de cada rendición (documentos, monto, título, comentarios del supervisor, etc.).</li>
+                    <li>Aprobar si todo está correcto, o rechazar indicando el motivo (el proceso se detiene y el empleado es notificado).</li>
+                    <li>Una vez aprobada, la rendición queda lista para que la supervisora realice el pago.</li>
+                </ul>
+            </div>
+        </section>
+        <section id="pasos" class="help-section">
+            <h2><i class="fas fa-check-circle"></i> Pasos para aprobar o rechazar</h2>
+            <div class="help-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Accede a Rendiciones en Espera</h4>
+                        <p>Desde tu panel, haz clic en "Rendiciones" para ver las solicitudes que requieren tu aprobación final.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Revisa los Detalles</h4>
+                        <p>Haz clic en "Ver Detalle" para analizar la información, documentos y comentarios del supervisor.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Aprobar o Rechazar</h4>
+                        <p>Aprueba si todo está correcto o rechaza indicando el motivo. El empleado y el supervisor serán notificados.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="tabla" class="help-section">
+            <h2><i class="fas fa-table"></i> Ejemplo de la tabla de rendiciones</h2>
+            <div class="help-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket</th>
+                            <th>Empleado</th>
+                            <th>Título</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>RND-636148</td><td>Catalina Núñez</td><td>HOOOOOO</td><td>$10.000</td><td>30-06-2025</td><td>En Espera Gerencia</td><td>Ver Detalle</td></tr>
+                        <tr><td>RND-316352</td><td>Catalina Núñez</td><td>nuevanueva</td><td>$1.000</td><td>30-06-2025</td><td>En Espera Gerencia</td><td>Ver Detalle</td></tr>
+                        <tr><td>RND-294862</td><td>Catalina Núñez</td><td>hola</td><td>$1.000</td><td>30-06-2025</td><td>En Espera Gerencia</td><td>Ver Detalle</td></tr>
+                        <tr><td>RND-391516</td><td>Catalina Núñez</td><td>nuevanueva</td><td>$300</td><td>29-06-2025</td><td>Aprobada Final</td><td>Ver Detalle</td></tr>
+                    </tbody>
+                </table>
+                <div style="font-size:0.95rem;color:#64748b;">Haz clic en <strong>Ver Detalle</strong> para aprobar o rechazar la rendición.</div>
+            </div>
+        </section>
+        <section id="flujo" class="help-section">
+            <h2><i class="fas fa-info-circle"></i> ¿Qué pasa si apruebo o rechazo?</h2>
+            <div class="help-text">
+                <ul>
+                    <li><strong>Si apruebas:</strong> la rendición queda lista para que la supervisora realice el pago y el empleado es notificado.</li>
+                    <li><strong>Si rechazas:</strong> la rendición queda rechazada y tanto el empleado como el supervisor son notificados para corregir.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+</div>
+
+@section Scripts {
+    <script>
+        // Smooth scrolling para los enlaces de ayuda
+        document.querySelectorAll('.help-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+}
+
+</div>
+</body>
+</html>

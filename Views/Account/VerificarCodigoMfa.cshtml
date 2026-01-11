@@ -1,0 +1,480 @@
+@{
+    ViewData["Title"] = "Verificación de Seguridad";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sistema de Rendiciones</title>
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="~/images/image.png" />
+    <style>
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body {
+            min-height: 100vh;
+            background: url('/images/salmon_background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .back-to-login {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            color: rgb(19, 100, 137);
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(19, 100, 137, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-to-login:hover {
+            background: rgb(19, 100, 137);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(19, 100, 137, 0.3);
+        }
+        
+        .back-to-login i {
+            font-size: 12px;
+        }
+        
+        .container-mfa {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            flex: 1 0 auto;
+            padding: 20px;
+        }
+        
+        .mfa-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            max-width: 550px;
+            width: 100%;
+            padding: 60px 40px 40px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.6s ease-out;
+        }
+        
+
+        
+        @@keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .logo-container {
+            margin-bottom: 30px;
+        }
+        
+        .logo-container img {
+            width: 140px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+        
+        .mfa-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(19, 100, 137, 0.1) 0%, rgba(19, 100, 137, 0.05) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(19, 100, 137, 0.1);
+        }
+        
+        .mfa-icon i {
+            font-size: 2.5rem;
+            color: rgb(19, 100, 137);
+        }
+        
+        .mfa-card h2 {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2rem;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+        
+        .mfa-sub {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 30px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .inputBox {
+            width: 100%;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .mfa-card input[type="text"] {
+            width: 100%;
+            font-size: 1.5rem;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            margin-bottom: 0;
+            transition: all 0.3s ease;
+            text-align: center;
+            letter-spacing: 0.3em;
+            font-weight: 700;
+            background: #f8f9fa;
+            box-sizing: border-box;
+        }
+        
+        .mfa-card input[type="text"]:focus {
+            outline: none;
+            border-color: rgb(19, 100, 137);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(19, 100, 137, 0.1);
+        }
+        
+        .form-text {
+            color: #6c757d;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            text-align: center;
+            padding: 12px;
+            background: rgba(19, 100, 137, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid rgb(19, 100, 137);
+        }
+        
+        .form-text i {
+            margin-right: 8px;
+            color: rgb(19, 100, 137);
+        }
+        
+        .btn {
+            width: 100%;
+            background: rgb(19, 100, 137);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 15px 0;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(19, 100, 137, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: rgb(16, 85, 116);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(19, 100, 137, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-link {
+            color: rgb(19, 100, 137);
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            margin-bottom: 0;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .btn-link:hover {
+            color: rgb(16, 85, 116);
+            background: rgba(19, 100, 137, 0.05);
+            text-decoration: none;
+        }
+        
+        .links-row {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin-top: 10px;
+        }
+        
+        .alert-success, .alert-danger, .alert-warning {
+            width: 100%;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f1b0b7 100%);
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .alert-warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .footer-empty {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            background: none;
+            box-shadow: none;
+            position: static;
+            width: 100%;
+            font-weight: 400;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .container-mfa {
+                padding: 20px 10px;
+            }
+            
+            .mfa-card {
+                padding: 40px 30px;
+                margin: 20px;
+            }
+            
+            .back-to-login {
+                top: 15px;
+                left: 15px;
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
+        
+        @@media (max-width: 480px) {
+            .mfa-card {
+                padding: 30px 20px;
+            }
+            
+            .mfa-card h2 {
+                font-size: 1.7rem;
+            }
+            
+            .mfa-card input[type="text"] {
+                font-size: 1.3rem;
+                padding: 12px 16px;
+            }
+            
+            .back-to-login {
+                top: 10px;
+                left: 10px;
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+        
+        /* Reduce motion para usuarios sensibles */
+        @@media (prefers-reduced-motion: reduce) {
+            .mfa-card {
+                animation: none;
+            }
+            
+            .alert-success, .alert-danger, .alert-warning {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón Volver al Login en esquina superior izquierda -->
+    <a href="@Url.Action("Login")" class="back-to-login">
+        <i class="fas fa-arrow-left"></i> Volver al Login
+    </a>
+
+    <div class="container-mfa">
+        <div class="mfa-card">
+            <div class="logo-container">
+                <img src="~/images/image.png" alt="Primar Logo">
+            </div>
+            <div class="mfa-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h2>Verificación de Seguridad</h2>
+            <div class="mfa-sub">Ingresa el código de 6 dígitos enviado a tu correo</div>
+            <div id="alertContainer"></div>
+            <form id="verificarForm" style="width:100%;">
+                <div class="inputBox">
+                    <input type="text" id="codigo" name="codigo" required maxlength="6" pattern="[0-9]{6}" placeholder="000000" autocomplete="off">
+                </div>
+                <div class="form-text">
+                    <i class="fas fa-info-circle"></i> Código de 6 dígitos enviado a <strong id="emailMostrar"></strong>
+                </div>
+                <button type="submit" class="btn" id="btnVerificar">
+                    <i class="fas fa-check"></i> Verificar Código
+                </button>
+                <div class="links-row">
+                    <a href="#" class="btn-link" id="btnReenviar">
+                        <i class="fas fa-redo"></i> Reenviar Código
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="footer-empty">
+        © @DateTime.Now.Year Todos los derechos reservados - Catalina Núñez
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email');
+            if (email) {
+                $('#emailMostrar').text(email);
+            }
+            $('#codigo').on('input', function() {
+                let value = $(this).val().replace(/\D/g, '');
+                if (value.length > 6) {
+                    value = value.substring(0, 6);
+                }
+                $(this).val(value);
+            });
+            $('#verificarForm').on('submit', function(e) {
+                e.preventDefault();
+                const codigo = $('#codigo').val().trim();
+                if (codigo.length !== 6) {
+                    mostrarAlerta('Por favor, ingresa un código de 6 dígitos.', 'warning');
+                    return;
+                }
+                $('#btnVerificar').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Verificando...');
+                $.ajax({
+                    url: '@Url.Action("VerificarCodigoMfa")',
+                    type: 'POST',
+                    data: { email: email, codigo: codigo },
+                    success: function(response) {
+                        if (response.success) {
+                            mostrarAlerta(response.message, 'success');
+                            setTimeout(function() {
+                                window.location.href = response.redirectUrl;
+                            }, 1200);
+                        } else {
+                            mostrarAlerta(response.message, 'danger');
+                            $('#codigo').val('').focus();
+                        }
+                    },
+                    error: function() {
+                        mostrarAlerta('Error de conexión. Por favor, intenta nuevamente.', 'danger');
+                    },
+                    complete: function() {
+                        $('#btnVerificar').prop('disabled', false).html('<i class="fas fa-check"></i> Verificar Código');
+                    }
+                });
+            });
+            $('#btnReenviar').on('click', function(e) {
+                e.preventDefault();
+                $('#btnReenviar').html('<i class="fas fa-spinner fa-spin"></i> Enviando...');
+                $.ajax({
+                    url: '@Url.Action("ReenviarCodigoMfa")',
+                    type: 'POST',
+                    data: { email: email },
+                    success: function(response) {
+                        mostrarAlerta(response.message, response.success ? 'success' : 'danger');
+                    },
+                    error: function() {
+                        mostrarAlerta('No se pudo reenviar el código. Intenta nuevamente.', 'danger');
+                    },
+                    complete: function() {
+                        $('#btnReenviar').html('<i class="fas fa-redo"></i> Reenviar Código');
+                    }
+                });
+            });
+        });
+        function mostrarAlerta(mensaje, tipo) {
+            let icon = '';
+            if (tipo === 'success') icon = '<i class="fas fa-check-circle"></i>';
+            if (tipo === 'danger') icon = '<i class="fas fa-times-circle"></i>';
+            if (tipo === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
+            $('#alertContainer').html(`<div class="alert-${tipo}">${icon} ${mensaje}</div>`);
+        }
+    </script>
+</body>
+</html>

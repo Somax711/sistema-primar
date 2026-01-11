@@ -1,0 +1,679 @@
+@model IEnumerable<RendicionesPrimar.Models.Rendicion>
+@{
+    ViewData["Title"] = "Historial de Rendiciones - Supervisor";
+    var estado = ViewBag.Estado as string;
+}
+
+<style>
+:root {
+    --primary-blue: #215c8e;
+    --primary-blue-light: #357ab7;
+    --primary-blue-dark: #1a4b73;
+    --accent-teal: #215c8e;
+    --accent-teal-light: #357ab7;
+    --success-green: #059669;
+    --success-green-light: #10b981;
+    --warning-orange: #d97706;
+    --danger-red: #dc2626;
+    --danger-red-light: #ef4444;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --white: #ffffff;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-2xl: 20px;
+    --gradient-primary: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%);
+    --gradient-accent: linear-gradient(135deg, var(--accent-teal) 0%, var(--accent-teal-light) 100%);
+    --gradient-success: linear-gradient(135deg, var(--success-green) 0%, var(--success-green-light) 100%);
+    --gradient-danger: linear-gradient(135deg, var(--danger-red) 0%, var(--danger-red-light) 100%);
+    --gradient-background: linear-gradient(135deg, var(--gray-50) 0%, #f1f5f9 100%);
+}
+
+body {
+    background: var(--gradient-background);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--gray-800);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 32px 60px 32px; /* Añadido padding-bottom */
+    min-height: calc(100vh - 200px); /* Asegurar altura mínima */
+}
+
+/* Header premium como gerente */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px; /* Aumentado de 24px a 32px */
+    padding: 20px 28px; /* Aumentado padding */
+    background: var(--white);
+    border-radius: 16px; /* Aumentado border-radius */
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08); /* Sombra más suave */
+    border: 1px solid var(--gray-200);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-primary);
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-title h2 {
+    font-size: 1.6rem; /* Aumentado de 1.5rem */
+    font-weight: 700; /* Aumentado peso */
+    color: var(--gray-800);
+    margin: 0;
+}
+
+.page-title .title-icon {
+    width: 48px; /* Aumentado de 40px */
+    height: 48px; /* Aumentado de 40px */
+    border-radius: 14px; /* Aumentado border-radius */
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.3rem; /* Aumentado tamaño icono */
+}
+
+.page-stats {
+    text-align: right;
+    color: var(--gray-500);
+    font-size: 0.85rem;
+}
+
+.page-stats .stat-number {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--primary-blue);
+    display: block;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+
+/* Filtros premium como gerente */
+.filters-section {
+    background: var(--white);
+    border-radius: 16px; /* Aumentado border-radius */
+    padding: 24px 28px; /* Aumentado padding */
+    margin-bottom: 32px; /* Aumentado margin */
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08); /* Sombra más suave */
+    border: 1px solid var(--gray-200);
+}
+
+.filter-form {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Aumentado gap */
+    flex-wrap: wrap;
+}
+
+.filter-label {
+    font-size: 1rem; /* Aumentado tamaño */
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0;
+}
+
+.form-select {
+    min-width: 220px; /* Aumentado ancho mínimo */
+    padding: 12px 16px; /* Aumentado padding */
+    border: 2px solid var(--gray-200); /* Borde más grueso */
+    border-radius: 10px; /* Aumentado border-radius */
+    background: var(--white);
+    color: var(--gray-800);
+    font-size: 1rem; /* Aumentado tamaño fuente */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05); /* Añadida sombra sutil */
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(33, 92, 142, 0.1);
+}
+
+/* Tabla moderna como gerente */
+.table-container {
+    background: var(--white);
+    border-radius: 16px; /* Aumentado border-radius */
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08); /* Sombra más suave */
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+    position: relative;
+    margin-bottom: 40px; /* Añadido margen inferior */
+}
+
+.table-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    z-index: 1;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.tabla-historial {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.tabla-historial thead th {
+    background: #f8fafc;
+    color: var(--gray-800);
+    font-size: 0.8rem; /* Aumentado ligeramente */
+    font-weight: 600;
+    padding: 16px 14px; /* Aumentado padding */
+    text-align: left;
+    border-bottom: 2px solid var(--gray-200);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: relative;
+    z-index: 2;
+}
+
+.tabla-historial tbody td {
+    padding: 16px 14px; /* Aumentado padding */
+    border-bottom: 1px solid #f1f5f9;
+    background: var(--white);
+    transition: background-color 0.2s ease;
+    vertical-align: middle;
+    font-size: 0.85rem; /* Aumentado ligeramente */
+}
+
+.tabla-historial tbody tr:hover td {
+    background: #f8fafc;
+}
+
+.tabla-historial tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Elementos de tabla modernos */
+.ticket-id {
+    font-weight: 600;
+    color: var(--primary-blue);
+    background: #e0f2fe;
+    padding: 6px 12px; /* Aumentado padding */
+    border-radius: 8px; /* Aumentado border-radius */
+    font-size: 0.8rem; /* Aumentado ligeramente */
+    display: inline-block;
+    font-family: 'Courier New', monospace;
+}
+
+.empleado-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.empleado-avatar {
+    width: 28px; /* Aumentado de 24px */
+    height: 28px; /* Aumentado de 24px */
+    border-radius: 50%;
+    background: var(--primary-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.7rem; /* Aumentado ligeramente */
+    flex-shrink: 0;
+}
+
+.empleado-nombre {
+    font-size: 0.85rem; /* Aumentado de 0.8rem */
+    color: var(--gray-800);
+    font-weight: 500;
+}
+
+.monto {
+    font-weight: 600;
+    color: var(--success-green);
+    font-size: 0.85rem; /* Aumentado de 0.8rem */
+}
+
+/* Estados modernos */
+.estado-badge {
+    padding: 6px 12px; /* Aumentado padding */
+    border-radius: 14px; /* Aumentado border-radius */
+    font-size: 0.75rem; /* Aumentado ligeramente */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.estado-pendiente {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning-orange);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.estado-aprobado_1 {
+    background: rgba(6, 182, 212, 0.1);
+    color: #06b6d4;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.estado-aprobado_2 {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success-green);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.estado-rechazado_1,
+.estado-rechazado {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger-red);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.estado-pagado {
+    background: rgba(34, 197, 94, 0.1);
+    color: #059669;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+/* Botones de acción modernos */
+.actions-cell {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-ver {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-ver:hover {
+    color: white;
+    background: var(--primary-blue-dark);
+    text-decoration: none;
+}
+
+.btn-eliminar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--danger-red);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.7rem;
+}
+
+.btn-eliminar:hover {
+    background: #dc2626;
+}
+
+/* Fecha compacta */
+.fecha-cell {
+    font-size: 0.8rem; /* Aumentado ligeramente */
+    color: var(--gray-600);
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* Alertas modernas */
+.alert {
+    border-radius: 12px;
+    border: none;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+    color: #065f46;
+    border-left: 4px solid var(--success-green);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+    color: #991b1b;
+    border-left: 4px solid var(--danger-red);
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+/* Responsive */
+@@media (max-width: 768px) {
+    .container {
+        padding: 16px 12px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+        padding: 16px;
+    }
+
+    .page-title h2 {
+        font-size: 1.3rem;
+    }
+
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .form-select {
+        min-width: 100%;
+    }
+
+    .tabla-historial tbody td {
+        padding: 8px 6px;
+        font-size: 0.75rem;
+    }
+
+    .tabla-historial thead th {
+        padding: 8px 6px;
+        font-size: 0.7rem;
+    }
+
+    .actions-cell {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .empleado-info {
+        flex-direction: column;
+        gap: 4px;
+        align-items: center;
+        text-align: center;
+    }
+
+    .empleado-nombre {
+        font-size: 0.75rem;
+    }
+}
+
+@@media (max-width: 480px) {
+    .page-header {
+        padding: 12px;
+    }
+
+    .page-title h2 {
+        font-size: 1.2rem;
+    }
+
+    .filters-section {
+        padding: 16px;
+    }
+}
+
+/* Animaciones */
+@@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-header {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.filters-section,
+.table-container {
+    animation: fadeInUp 0.6s ease-out;
+    animation-delay: 0.1s;
+    animation-fill-mode: both;
+}
+
+.tabla-historial tbody tr {
+    animation: fadeInUp 0.4s ease-out;
+}
+
+/* Mejorar legibilidad en pantallas con zoom */
+@@media (min-resolution: 120dpi) {
+    .tabla-historial {
+        font-size: 0.85rem;
+    }
+    
+    .btn-ver {
+        font-size: 0.8rem;
+    }
+    
+    .estado-badge {
+        font-size: 0.75rem;
+    }
+}
+
+.footer-empty {
+    text-align: center;
+    color: #6b7280;
+    font-size: 1rem;
+    margin-top: 48px;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+}
+</style>
+
+<div class="container">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+    }
+
+    <!-- Header de página -->
+    <div class="page-header">
+        <div class="page-title">
+            <div class="title-icon">
+                <i class="fas fa-history"></i>
+            </div>
+            <h2>Historial de Rendiciones (Supervisor)</h2>
+        </div>
+        <div class="page-stats">
+            <span class="stat-number">@Model.Count()</span>
+            <div>Total de registros</div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-section">
+        <form method="get" class="filter-form">
+            <label class="filter-label">Filtrar por estado:</label>
+            <select name="estado" class="form-select" onchange="this.form.submit()">
+                <option value="">Todos</option>
+                @if (estado == "pendiente") { <option value="pendiente" selected>Pendiente</option> } else { <option value="pendiente">Pendiente</option> }
+                @if (estado == "aprobado_1") { <option value="aprobado_1" selected>Aprobado 1</option> } else { <option value="aprobado_1">Aprobado 1</option> }
+                @if (estado == "aprobado_2") { <option value="aprobado_2" selected>Aprobado 2</option> } else { <option value="aprobado_2">Aprobado 2</option> }
+                @if (estado == "rechazado_1") { <option value="rechazado_1" selected>Rechazado 1</option> } else { <option value="rechazado_1">Rechazado 1</option> }
+                @if (estado == "rechazado") { <option value="rechazado" selected>Rechazado</option> } else { <option value="rechazado">Rechazado</option> }
+                @if (estado == "pagado") { <option value="pagado" selected>Pagado</option> } else { <option value="pagado">Pagado</option> }
+            </select>
+        </form>
+    </div>
+
+    <!-- Tabla de historial -->
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="tabla-historial">
+                <thead>
+                    <tr>
+                        <th>N° Ticket</th>
+                        <th>Empleado</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th>Detalle</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var r in Model) 
+                    {
+                        <tr>
+                            <td>
+                                <span class="ticket-id">@r.NumeroTicket</span>
+                            </td>
+                            <td>
+                                <div class="empleado-info">
+                                    <div class="empleado-avatar">
+                                        @((r.Usuario?.Nombre ?? "U").Substring(0, 1).ToUpper())
+                                    </div>
+                                    <span class="empleado-nombre">@(r.Usuario?.Nombre) @(r.Usuario?.Apellidos)</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="monto">@r.MontoTotal.ToString("C0")</span>
+                            </td>
+                            <td>
+                                <span class="estado-badge estado-@r.Estado">
+                                    @switch(r.Estado)
+                                    {
+                                        case "pendiente":
+                                            @:Pendiente
+                                            break;
+                                        case "aprobado_1":
+                                            @:Aprobado 1
+                                            break;
+                                        case "aprobado_2":
+                                            @:Aprobado 2
+                                            break;
+                                        case "pagado":
+                                            @:Pagado
+                                            break;
+                                        // Ocultar rechazado y rechazado_1
+                                        default:
+                                            if (r.Estado != "rechazado" && r.Estado != "rechazado_1")
+                                            {
+                                                @r.Estado
+                                            }
+                                            break;
+                                    }
+                                </span>
+                            </td>
+                            <td class="fecha-cell">
+                                @r.FechaCreacion.ToString("dd/MM/yyyy")
+                                <br>
+                                <small>@r.FechaCreacion.ToString("HH:mm")</small>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Detalle", "Rendiciones", new { id = r.Id })" class="btn-ver" title="Ver Detalle">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
+                            </td>
+                            <td>
+                                <button type="button" class="btn-eliminar" title="Eliminar" onclick="eliminarRendicion(@r.Id, this)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="footer-empty">
+    Todos los derechos reservados
+</div>
+
+<script>
+function eliminarRendicion(id, btn) {
+    if (!confirm('¿Estás seguro de eliminar esta rendición?')) return;
+    fetch('@Url.Action("EliminarRendicion", "Rendiciones")', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'id=' + id
+    })
+    .then(async response => {
+        let data;
+        try {
+            data = await response.json();
+        } catch (e) {
+            return;
+        }
+        if (data.success) {
+            // Eliminar la fila de la tabla sin recargar
+            const row = btn.closest('tr');
+            if (row) row.remove();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Error al eliminar la rendición: ' + error.message);
+    });
+}
+</script>

@@ -1,0 +1,1031 @@
+@model RendicionesPrimar.Models.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Primar | Sistema de Rendiciones";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal Gerente - Sistema de Rendiciones | Primar S.A.</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+    :root {
+        --primar-primary:rgb(31, 90, 136);
+        --primar-primary-dark:rgb(31, 90, 136);
+        --primar-primary-light: rgb(31, 90, 136);
+        --primar-secondary: #f1f5f9;
+        --primar-success: #10b981;
+        --primar-warning: #f59e0b;
+        --primar-danger: #ef4444;
+        --primar-info: #06b6d4;
+        --primar-text: #1e293b;
+        --primar-text-light: #64748b;
+        --primar-background: #f8fafc;
+        --primar-white: #ffffff;
+        --primar-border: #e2e8f0;
+        --primar-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --primar-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --primar-radius: 12px;
+        --primar-radius-sm: 8px;
+        --primar-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        --primar-gradient: linear-gradient(135deg, var(--primar-primary) 0%, var(--primar-primary-light) 100%);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: var(--primar-background);
+        color: var(--primar-text);
+        line-height: 1.6;
+        font-size: 15px;
+        font-weight: 400;
+    }
+    .app-container { min-height: 100vh; display: flex; flex-direction: column; }
+    .header { background: var(--primar-gradient); box-shadow: var(--primar-shadow); position: sticky; top: 0; z-index: 1000; }
+    .header-content { max-width: 1400px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; height: 70px; }
+    .brand { display: flex; align-items: center; color: white; gap: 12px; }
+    .brand i { font-size: 1.5rem; }
+    .brand-text h1 { font-size: 1.25rem; font-weight: 700; margin: 0; line-height: 1.2; }
+    .brand-text span { font-size: 0.75rem; opacity: 0.9; font-weight: 400; }
+    .nav { display: flex; align-items: center; gap: 8px; }
+    .nav-link { color: rgba(255,255,255,0.95); text-decoration: none; padding: 10px 16px; border-radius: var(--primar-radius-sm); font-weight: 500; font-size: 0.83rem; transition: var(--primar-transition); display: flex; align-items: center; gap: 8px; position: relative; }
+    .nav-link:hover { color: white; background-color: rgba(255,255,255,0.15); text-decoration: none; }
+    .nav-link.active { background-color: rgba(255,255,255,0.2); color: white; }
+    .badge { position: absolute; top: -4px; right: -4px; background: var(--primar-danger); color: white; font-size: 0.7rem; font-weight: 600; padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center; }
+    .user-section { display: flex; align-items: center; gap: 16px; padding-left: 24px; border-left: 1px solid rgba(255,255,255,0.2); }
+    .user-info { color: white; text-align: right; }
+    .user-name { display: block; font-weight: 500; font-size: 0.9rem; }
+    .user-role { display: inline-block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 8px; border-radius: 12px; margin-top: 2px; }
+    .role-gerente { background: rgba(16, 185, 129, 0.3); }
+    .btn-logout { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: var(--primar-radius-sm); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: var(--primar-transition); display: flex; align-items: center; gap: 8px; }
+    .btn-logout:hover { background: rgba(255,255,255,0.25); }
+    </style>
+</head>
+<body>
+
+    <!-- Contenido principal -->
+    <main class="main">
+        <div class="container" style="max-width: 1200px; margin: 40px auto; padding: 0 32px;">
+            
+            <!-- Header ejecutivo -->
+            <div class="dashboard-header" style="position:relative;">
+                <!-- Contenedor para salmones animados SOLO dentro del recuadro -->
+                <div class="salmon-container" id="salmonContainer" style="position:absolute;left:0;top:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:hidden;"></div>
+                <div style="position:relative;z-index:2;">
+                    <div class="header-title">
+                        <h1>Panel de Control Gerencial</h1>
+                        <p>Aprobación final y gestión ejecutiva de rendiciones - Primar S.A.</p>
+                    </div>
+                    <div class="header-date">
+                        <span>@DateTime.Now.ToString("dddd, dd MMMM yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPIs importantes -->
+            <div class="kpi-grid">
+                <div class="kpi-card primary">
+                    <div class="kpi-header">
+                        <div class="kpi-title">PENDIENTES<br>APROBACIÓN FINAL</div>
+                        <div class="kpi-icon">
+                            <i class="fas fa-signature"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">@(Model?.RendicionesPendientes ?? 0)</div>
+                    <div class="kpi-trend urgent">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Requieren tu aprobación
+                    </div>
+                </div>
+                <div class="kpi-card info">
+                    <div class="kpi-header">
+                        <div class="kpi-title">TOTAL<br>RENDICIONES</div>
+                        <div class="kpi-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">@(Model?.TotalRendiciones ?? 0)</div>
+                    <div class="kpi-trend neutral">
+                        <i class="fas fa-minus"></i>
+                        Acumuladas
+                    </div>
+                </div>
+                <div class="kpi-card success">
+                    <div class="kpi-header">
+                        <div class="kpi-title">RENDICIONES<br>APROBADAS</div>
+                        <div class="kpi-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">@(Model?.RendicionesAprobadas ?? 0)</div>
+                    <div class="kpi-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        Aprobadas
+                    </div>
+                </div>
+                <div class="kpi-card warning">
+                    <div class="kpi-header">
+                        <div class="kpi-title">MONTO TOTAL<br>PENDIENTE</div>
+                        <div class="kpi-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">$@(Model?.MontoTotal.ToString("N0") ?? "0")</div>
+                    <div class="kpi-trend neutral">
+                        <i class="fas fa-minus"></i>
+                        Por autorizar
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones Rápidas -->
+            <div class="actions-section">
+                <h3><i class="fas fa-bolt"></i> Acciones Rápidas</h3>
+                <div class="actions-grid">
+                    <a href="@Url.Action("RendicionesPendientes", "Gerentes")" class="action-card primary">
+                        <i class="fas fa-signature"></i>
+                        <div>
+                            <h4>Aprobar Rendiciones</h4>
+                            <p>Revisar y autorizar solicitudes pendientes</p>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="@Url.Action("Notificaciones", "Gerentes")" class="action-card info">
+                        <i class="fas fa-bell"></i>
+                        <div>
+                            <h4>Ver Notificaciones</h4>
+                            <p>Consulta tus notificaciones recientes</p>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="@Url.Action("Ayuda", "Home")" class="action-card warning">
+                        <i class="fas fa-question-circle"></i>
+                        <div>
+                            <h4>Ayuda</h4>
+                            <p>Centro de ayuda para gerentes</p>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Actividad reciente -->
+            @if (Model?.UltimasRendiciones != null && Model.UltimasRendiciones.Any())
+            {
+                <div class="activity-section">
+                    <h3><i class="fas fa-history"></i> Actividad Reciente</h3>
+                    <div class="activity-list">
+                        @foreach (var rendicion in Model.UltimasRendiciones)
+                        {
+                            <a href="@Url.Action("Detalle", "Rendiciones", new { id = rendicion.Id })" class="activity-item" style="display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;padding:18px 24px;border-bottom:1px solid #e2e8f0;background:#fff;transition:background 0.2s;">
+                                <div class="activity-icon" style="width:40px;height:40px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;color:#1e293b;font-size:1.3rem;border:1.5px solid #2563eb;">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                </div>
+                                <div class="activity-content" style="flex:1;">
+                                    <strong>
+                                        Rendición #@rendicion.Id: @rendicion.Titulo
+                                    </strong>
+                                    @if (!string.Equals(rendicion.EstadoLegible, "Desconocido", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="status-badge @rendicion.Estado.ToLower()" style="font-size:1.1em;font-weight:600;">@rendicion.EstadoLegible</span>
+                                    }
+                                </div>
+                                <div class="activity-time" style="font-size:0.9rem;color:#64748b;min-width:110px;text-align:right;">
+                                    @rendicion.FechaCreacion.ToString("dd-MM-yyyy HH:mm")
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </main>
+</div>
+
+<style>
+/* Variables corporativas */
+:root {
+    --primar-primary:rgb(31, 90, 136);
+    --primar-primary-dark:rgb(31, 90, 136);
+    --primar-primary-light: rgb(31, 90, 136);
+    --primar-secondary: #f1f5f9;
+    --primar-success: #10b981;
+    --primar-warning: #f59e0b;
+    --primar-danger: #ef4444;
+    --primar-info: #06b6d4;
+    --primar-text: #1e293b;
+    --primar-text-light: #64748b;
+    --primar-background: #f8fafc;
+    --primar-white: #ffffff;
+    --primar-border: #e2e8f0;
+    --primar-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --primar-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --primar-radius: 12px;
+    --primar-radius-sm: 8px;
+    --primar-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --primar-gradient: linear-gradient(135deg, var(--primar-primary) 0%, var(--primar-primary-light) 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--primar-background);
+    color: var(--primar-text);
+    line-height: 1.6;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    background: var(--primar-gradient);
+    box-shadow: var(--primar-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    color: white;
+    gap: 12px;
+}
+
+.brand i {
+    font-size: 1.5rem;
+}
+
+.brand-text h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.brand-text span {
+    font-size: 0.75rem;
+    opacity: 0.9;
+    font-weight: 400;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-link {
+    color: rgba(255,255,255,0.95);
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: var(--primar-radius-sm);
+    font-weight: 500;
+    font-size: 0.83rem;
+    transition: var(--primar-transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: white;
+    background-color: rgba(255,255,255,0.15);
+    text-decoration: none;
+}
+
+.nav-link.active {
+    background-color: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--primar-danger);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-left: 24px;
+    border-left: 1px solid rgba(255,255,255,0.2);
+}
+
+.user-info {
+    color: white;
+    text-align: right;
+}
+
+.user-name {
+    display: block;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.user-role {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-top: 2px;
+}
+
+.role-gerente { background: rgba(16, 185, 129, 0.3); }
+
+.btn-logout {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 8px 16px;
+    border-radius: var(--primar-radius-sm);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--primar-transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-logout:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+/* Main content */
+.main {
+    flex: 1;
+    padding: 18px 0;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 12px;
+}
+
+/* Dashboard header */
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding: 54px 0 60px 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 32px;
+    box-shadow: var(--primar-shadow);
+}
+
+.header-title h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primar-text);
+    margin-bottom: 6px;
+    background: var(--primar-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-title p {
+    font-size: 1rem;
+    color: var(--primar-text-light);
+    margin-bottom: 10px;
+}
+
+.header-date span {
+    font-size: 0.9rem;
+    color: var(--primar-text-light);
+    font-weight: 500;
+    background: var(--primar-white);
+    padding: 6px 12px;
+    border-radius: 20px;
+    box-shadow: var(--primar-shadow);
+}
+
+/* KPIs */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.kpi-card {
+    background: var(--primar-white);
+    border-radius: var(--primar-radius);
+    padding: 14px;
+    box-shadow: var(--primar-shadow);
+    transition: var(--primar-transition);
+    border-top: 4px solid;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--primar-shadow-hover);
+}
+
+.kpi-card.primary { border-top-color: var(--primar-primary); }
+.kpi-card.success { border-top-color: var(--primar-success); }
+.kpi-card.warning { border-top-color: var(--primar-warning); }
+.kpi-card.info { border-top-color: var(--primar-info); }
+
+.kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.kpi-title {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #64748b;
+    line-height: 1.3;
+}
+
+.kpi-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--primar-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: white;
+}
+
+.kpi-card.primary .kpi-icon { background: var(--primar-primary); }
+.kpi-card.success .kpi-icon { background: var(--primar-success); }
+.kpi-card.warning .kpi-icon { background: var(--primar-warning); }
+.kpi-card.info .kpi-icon { background: var(--primar-info); }
+
+.kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primar-text);
+    margin-bottom: 4px;
+}
+
+.kpi-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.kpi-trend.positive { color: var(--primar-success); }
+.kpi-trend.negative { color: var(--primar-danger); }
+.kpi-trend.neutral { color: var(--primar-text-light); }
+.kpi-trend.urgent { color: var(--primar-warning); }
+
+/* Charts */
+.charts-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.chart-container {
+    background: var(--primar-white);
+    border-radius: var(--primar-radius);
+    padding: 14px;
+    box-shadow: var(--primar-shadow);
+}
+
+.chart-header {
+    margin-bottom: 20px;
+}
+
+.chart-header h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--primar-text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chart-header i {
+    color: var(--primar-primary);
+}
+
+.chart-content {
+    height: 300px;
+    position: relative;
+}
+
+/* Actions */
+.actions-section {
+    margin-bottom: 48px;
+}
+
+.actions-section h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primar-text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.actions-section i {
+    color: var(--primar-primary);
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+}
+
+.action-card {
+    background: var(--primar-white);
+    border: 1px solid var(--primar-border);
+    border-radius: var(--primar-radius);
+    padding: 14px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: var(--primar-transition);
+}
+
+.action-card:hover {
+    box-shadow: var(--primar-shadow-hover);
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: inherit;
+    border-color: var(--primar-primary);
+}
+
+.action-card.primary {
+    background: var(--primar-gradient);
+    color: white;
+    border-color: var(--primar-primary);
+}
+
+.action-card.primary:hover {
+    color: white;
+}
+
+.action-card i:first-child {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--primar-radius);
+    background: var(--primar-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primar-primary);
+    font-size: 1.2rem;
+}
+
+.action-card.primary i:first-child {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.action-card div {
+    flex: 1;
+}
+
+.action-card h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.action-card p {
+    font-size: 0.875rem;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.action-card i:last-child {
+    color: var(--primar-text-light);
+    transition: var(--primar-transition);
+}
+
+.action-card:hover i:last-child {
+    color: var(--primar-primary);
+    transform: translateX(4px);
+}
+
+.action-card.primary:hover i:last-child {
+    color: white;
+}
+
+/* Activity */
+.activity-section {
+    margin-bottom: 48px;
+}
+
+.activity-section h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primar-text);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.activity-section i {
+    color: var(--primar-primary);
+}
+
+.activity-list {
+    background: var(--primar-white);
+    border: 1px solid var(--primar-border);
+    border-radius: var(--primar-radius);
+    overflow: hidden;
+}
+
+.activity-item {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--primar-border);
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: var(--primar-transition);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-item:hover {
+    background: var(--primar-secondary);
+}
+
+.activity-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primar-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primar-primary);
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+.activity-content p {
+    font-size: 0.875rem;
+    color: var(--primar-text);
+    margin-bottom: 4px;
+}
+
+.activity-content span {
+    font-size: 0.75rem;
+    color: var(--primar-text-light);
+}
+
+/* Responsive */
+@@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        height: auto;
+        padding: 16px 24px;
+        gap: 16px;
+    }
+    
+    .nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .user-section {
+        border-left: none;
+        border-top: 1px solid rgba(255,255,255,0.2);
+        padding-left: 0;
+        padding-top: 16px;
+    }
+    
+    .main {
+        padding: 24px 0;
+    }
+    
+    .container {
+        padding: 0 16px;
+    }
+    
+    .dashboard-header {
+        padding: 24px 16px;
+    }
+    
+    .header-title h1 {
+        font-size: 2rem;
+    }
+    
+    .kpi-grid,
+    .charts-section,
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-content {
+        height: 250px;
+    }
+}
+
+@@media (max-width: 480px) {
+    .container {
+        padding: 0 12px;
+    }
+    
+    .brand {
+        flex-direction: column;
+        gap: 4px;
+        text-align: center;
+    }
+    
+    .nav {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .user-section {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .action-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+    
+    .kpi-card {
+        text-align: center;
+    }
+    
+    .kpi-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+    }
+}
+</style>
+
+<!-- Estilos para salmones animados -->
+<style>
+/* ===== SALMONES ANIMADOS ===== */
+.salmon-container {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    z-index: 1;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.salmon {
+    position: absolute;
+    width: 120px;
+    height: 48px;
+    opacity: 0.35;
+    filter: blur(0.5px) drop-shadow(0 2px 4px rgba(0,0,0,0.10));
+    pointer-events: none;
+    z-index: 1;
+}
+
+.salmon svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.salmon-tail {
+    animation: tailWiggle 2s ease-in-out infinite;
+    transform-origin: 35px 20px;
+}
+
+@@keyframes swimSalmon {
+    0% { left: -120px; opacity: 0; }
+    10% { opacity: 0.35; }
+    90% { opacity: 0.35; }
+    100% { left: 100%; opacity: 0; }
+}
+
+@@keyframes tailWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-5deg); }
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gráfico de estado de rendiciones
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pendientes Aprobación Final', 'Aprobadas Hoy', 'En Proceso', 'Rechazadas'],
+            datasets: [{
+                data: [@(Model?.RendicionesPendientes ?? 0), @(Model?.RendicionesAprobadas ?? 0), 8, 2],
+                backgroundColor: [
+                    '#f59e0b',
+                    '#10b981',
+                    '#06b6d4',
+                    '#ef4444'
+                ],
+                borderWidth: 0,
+                cutout: '60%'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfico de aprobaciones por día
+    const approvalCtx = document.getElementById('approvalChart').getContext('2d');
+    new Chart(approvalCtx, {
+        type: 'line',
+        data: {
+            labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+            datasets: [{
+                label: 'Aprobaciones',
+                data: [12, 19, 15, 25, 22, 8, 5],
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfico de montos por departamento
+    const departmentCtx = document.getElementById('departmentChart').getContext('2d');
+    new Chart(departmentCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Ventas', 'Marketing', 'IT', 'RRHH', 'Finanzas'],
+            datasets: [{
+                label: 'Monto Total ($)',
+                data: [45000, 32000, 28000, 15000, 38000],
+                backgroundColor: [
+                    '#2563eb',
+                    '#10b981',
+                    '#f59e0b',
+                    '#ef4444',
+                    '#06b6d4'
+                ],
+                borderWidth: 0,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+
+<!-- JavaScript para control dinámico de los salmones -->
+<script>
+    // Función para crear un salmón
+    function createSalmon() {
+        const container = document.getElementById('salmonContainer');
+        if (!container) return;
+        const salmon = document.createElement('div');
+        salmon.className = 'salmon';
+        const headerHeight = container.offsetHeight;
+        const topPosition = Math.random() * (headerHeight - 48);
+        salmon.style.top = topPosition + 'px';
+        const duration = Math.random() * 10 + 12;
+        salmon.style.animation = `swimSalmon ${duration}s linear forwards`;
+        salmon.innerHTML = `
+            <svg viewBox="0 0 120 48" width="120" height="48">
+                <path d="M35,20 Q55,5 85,15 Q95,20 85,25 Q55,35 35,20" fill="#fa8072" stroke="#e26d60" stroke-width="1"/>
+                <path class="salmon-tail" d="M35,20 Q25,10 15,20 Q25,30 35,20" fill="#fa8072" stroke="#e26d60" stroke-width="1"/>
+                <circle cx="80" cy="18" r="3" fill="black" />
+                <path d="M70,15 Q69,20 70,25" stroke="#e26d60" stroke-width="1.5" fill="none" />
+            </svg>
+        `;
+        container.appendChild(salmon);
+        setTimeout(() => { if (salmon.parentNode) salmon.parentNode.removeChild(salmon); }, (duration + 2) * 1000);
+    }
+    
+    // Inicializar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(createSalmon, 1000);
+        setTimeout(createSalmon, 3000);
+        setTimeout(createSalmon, 5000);
+        setInterval(createSalmon, 5000);
+    });
+</script>
+<style>
+    .footer-empty {
+        text-align: center;
+        color: #6b7280;
+        font-size: 1rem;
+        margin-top: 48px;
+        margin-bottom: 24px;
+        letter-spacing: 0.5px;
+    }
+</style>
+<div class="footer-empty">
+    Todos los derechos reservados
+</div>
+</body>
+</html> 

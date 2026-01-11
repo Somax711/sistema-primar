@@ -1,0 +1,179 @@
+@{
+    ViewData["Title"] = "Ayuda para Supervisores";
+}
+
+<style>
+    .help-header {
+        background: var(--primar-white);
+        border-radius: var(--primar-radius);
+        box-shadow: var(--primar-shadow);
+        padding: 32px;
+        margin-bottom: 32px;
+        border-left: 5px solid var(--primar-primary);
+        position: relative;
+        overflow: hidden;
+    }
+    .help-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 200px;
+        height: 200px;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+        border-radius: 50%;
+        transform: translate(50%, -50%);
+    }
+    .header-content { position: relative; z-index: 1; }
+    .header-title { font-size: 2rem; font-weight: 700; color: var(--primar-text); margin: 0; background: var(--primar-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .header-subtitle { color: var(--primar-text-light); margin: 8px 0 0 0; font-size: 1rem; }
+    .help-container { display: grid; grid-template-columns: 300px 1fr; gap: 32px; margin-top: 24px; }
+    .help-nav { background: var(--primar-white); border-radius: var(--primar-radius); box-shadow: var(--primar-shadow); padding: 24px; height: fit-content; position: sticky; top: 100px; border: 1px solid var(--primar-border); }
+    .help-nav h3 { font-size: 1.2rem; font-weight: 600; color: var(--primar-text); margin: 0 0 20px 0; padding-bottom: 12px; border-bottom: 2px solid var(--primar-border); }
+    .help-topics { list-style: none; padding: 0; margin: 0; }
+    .help-topics li { margin-bottom: 8px; }
+    .help-topics li a { display: block; padding: 12px 16px; color: var(--primar-text); text-decoration: none; border-radius: var(--primar-radius-sm); transition: var(--primar-transition); font-weight: 500; font-size: 0.9rem; }
+    .help-topics li a:hover { background: var(--primar-gradient); color: white; text-decoration: none; transform: translateX(4px); }
+    .help-content { background: var(--primar-white); border-radius: var(--primar-radius); box-shadow: var(--primar-shadow); padding: 32px; border: 1px solid var(--primar-border); }
+    .help-section { margin-bottom: 48px; scroll-margin-top: 120px; }
+    .help-section:last-child { margin-bottom: 0; }
+    .help-section h2 { font-size: 1.5rem; font-weight: 600; color: var(--primar-text); margin: 0 0 24px 0; padding-bottom: 12px; border-bottom: 2px solid var(--primar-border); display: flex; align-items: center; gap: 12px; }
+    .help-section h2 i { color: var(--primar-primary); font-size: 1.3rem; }
+    .help-steps { display: flex; flex-direction: column; gap: 24px; }
+    .step { display: flex; align-items: flex-start; gap: 20px; padding: 24px; background: var(--primar-secondary); border-radius: var(--primar-radius); border-left: 4px solid var(--primar-primary); }
+    .step-number { width: 40px; height: 40px; background: var(--primar-gradient); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0; }
+    .step-content h4 { font-size: 1.1rem; font-weight: 600; color: var(--primar-text); margin: 0 0 8px 0; }
+    .step-content p { color: var(--primar-text-light); margin: 0; line-height: 1.6; }
+    .help-text { background: var(--primar-secondary); padding: 24px; border-radius: var(--primar-radius); border-left: 4px solid var(--primar-primary); }
+    .help-text ul { margin: 0; padding-left: 20px; }
+    .help-text li { color: var(--primar-text-light); margin-bottom: 8px; line-height: 1.6; }
+    .help-text li strong { color: var(--primar-text); font-weight: 600; }
+    .help-table { overflow-x:auto; margin-bottom: 16px; }
+    .help-table table { width:100%; border-collapse:collapse; }
+    .help-table th, .help-table td { padding:8px; border:1px solid #e2e8f0; }
+    .help-table thead { background:#2563eb; color:#fff; }
+    @@media (max-width: 1024px) { .help-container { grid-template-columns: 1fr; gap: 24px; } .help-nav { position: static; order: 2; } .help-content { order: 1; } }
+    @@media (max-width: 768px) { .step { flex-direction: column; text-align: center; } }
+    .footer-empty {
+        text-align: center;
+        color: #6b7280;
+        font-size: 1rem;
+        margin-top: 48px;
+        margin-bottom: 24px;
+        letter-spacing: 0.5px;
+    }
+</style>
+
+<div class="help-header">
+    <div class="header-content">
+        <h1 class="header-title">
+            <i class="fas fa-question-circle" style="margin-right: 12px;"></i>
+            Centro de Ayuda - Supervisor
+        </h1>
+        <p class="header-subtitle">Guía rápida para la gestión de rendiciones como supervisor.</p>
+    </div>
+</div>
+
+<div class="help-container fade-in-up">
+    <aside class="help-nav">
+        <h3>Temas de Ayuda</h3>
+        <ul class="help-topics">
+            <li><a href="#que-hace" class="help-link">¿Qué puede hacer un Supervisor?</a></li>
+            <li><a href="#pasos" class="help-link">Pasos para aprobar/rechazar</a></li>
+            <li><a href="#tabla" class="help-link">Ejemplo de tabla</a></li>
+            <li><a href="#flujo" class="help-link">¿Qué pasa si apruebo o rechazo?</a></li>
+        </ul>
+    </aside>
+    <main class="help-content">
+        <section id="que-hace" class="help-section">
+            <h2><i class="fas fa-list"></i> ¿Qué puede hacer un Supervisor?</h2>
+            <div class="help-text">
+                <ul>
+                    <li>Ver la lista de <strong>Rendiciones Pendientes de Aprobación</strong>.</li>
+                    <li>Revisar el detalle de cada rendición (documentos, monto, título, etc.).</li>
+                    <li>Aprobar si todo está correcto, o rechazar indicando el motivo (el proceso se detiene).</li>
+                    <li>Una vez aprobada, la rendición pasa a Gerencia para la aprobación final y pago.</li>
+                </ul>
+            </div>
+        </section>
+        <section id="pasos" class="help-section">
+            <h2><i class="fas fa-check-circle"></i> Pasos para aprobar o rechazar</h2>
+            <div class="help-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Accede a Rendiciones Pendientes</h4>
+                        <p>Desde tu panel, haz clic en "Rendiciones" para ver todas las solicitudes que requieren tu revisión.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Revisa los Detalles</h4>
+                        <p>Haz clic en "Ver Detalle" para analizar la información, documentos y comentarios de cada rendición.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Aprobar o Rechazar</h4>
+                        <p>Utiliza los botones correspondientes para aprobar o rechazar la rendición. Si rechazas, indica el motivo para que el empleado pueda corregir.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="tabla" class="help-section">
+            <h2><i class="fas fa-table"></i> Ejemplo de la tabla de rendiciones</h2>
+            <div class="help-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket</th>
+                            <th>Empleado</th>
+                            <th>Título</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>RND-636148</td><td>Juan Pérez</td><td>Compra Insumos</td><td>$10.000</td><td>30-06-2025</td><td>Pendiente</td><td>Ver Detalle</td></tr>
+                        <tr><td>RND-316352</td><td>María González</td><td>Viaje Capacitación</td><td>$1.000</td><td>30-06-2025</td><td>Pendiente</td><td>Ver Detalle</td></tr>
+                        <tr><td>RND-294862</td><td>Pedro Ramírez</td><td>Reparación Equipo</td><td>$1.000</td><td>30-06-2025</td><td>Pendiente</td><td>Ver Detalle</td></tr>
+                        <tr><td>RND-391516</td><td>Laura Fernández</td><td>Pago Proveedor</td><td>$300</td><td>29-06-2025</td><td>Aprobada Nivel 1</td><td>Ver Detalle</td></tr>
+                    </tbody>
+                </table>
+                <div style="font-size:0.95rem;color:#64748b;">Haz clic en <strong>Ver Detalle</strong> para aprobar o rechazar la rendición.</div>
+            </div>
+        </section>
+        <section id="flujo" class="help-section">
+            <h2><i class="fas fa-info-circle"></i> ¿Qué pasa si apruebo o rechazo?</h2>
+            <div class="help-text">
+                <ul>
+                    <li><strong>Si apruebas:</strong> la rendición pasa a Gerencia para la aprobación final y pago.</li>
+                    <li><strong>Si rechazas:</strong> la rendición queda rechazada y el empleado es notificado para corregir.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div class="footer-empty">
+    Todos los derechos reservados
+</div>
+
+@section Scripts {
+    <script>
+        // Smooth scrolling para los enlaces de ayuda
+        document.querySelectorAll('.help-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+}

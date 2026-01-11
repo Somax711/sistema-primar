@@ -1,0 +1,597 @@
+@{
+    ViewData["Title"] = "Nueva Contraseña";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sistema de Rendiciones</title>
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="~/images/image.png" />
+</head>
+<body>
+    <style>
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body { 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            background: url('/images/salmon_background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container { 
+            flex: 1 0 auto; 
+            width: 100%; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 40px 20px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .user { 
+            display: flex; 
+            width: 100%; 
+            min-height: 550px; 
+            max-width: 950px; 
+            background: #fff; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2); 
+            overflow: hidden; 
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        @@keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .formBox { 
+            flex: 1 1 450px; 
+            max-width: 450px; 
+            padding: 60px 40px 40px 40px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            background: #fff;
+        }
+        
+        .logo.top-logo {
+            margin-bottom: 30px;
+        }
+        
+        .logo img {
+            width: 140px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+        
+        .formBox h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+        
+        .formBox h2 i {
+            color: rgb(19, 100, 137);
+            margin-right: 10px;
+        }
+        
+        .formBox p {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .inputBox {
+            position: relative;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+        
+        .inputBox input {
+            width: 100%;
+            padding: 15px 45px 15px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            box-sizing: border-box;
+        }
+        
+        .inputBox input:focus {
+            outline: none;
+            border-color: rgb(19, 100, 137);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(19, 100, 137, 0.1);
+        }
+        
+        .inputBox input.is-invalid {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            color: #6c757d;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+        
+        .toggle-password:hover {
+            color: rgb(19, 100, 137);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: rgb(19, 100, 137);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(19, 100, 137, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(19, 100, 137, 0.4);
+            background: rgb(16, 85, 116);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: rgb(19, 100, 137);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .btn-link:hover {
+            color: rgb(16, 85, 116);
+            text-decoration: underline;
+        }
+        
+        .back-to-login {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            color: rgb(19, 100, 137);
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(19, 100, 137, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-to-login:hover {
+            background: rgb(19, 100, 137);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(19, 100, 137, 0.3);
+        }
+        
+        .back-to-login i {
+            font-size: 12px;
+        }
+        
+        .btn-link i {
+            margin-right: 5px;
+        }
+        
+        .imageBox { 
+            flex: 1 1 500px; 
+            padding: 60px 40px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            background: rgb(19, 100, 137);
+            color: #fff; 
+            border-radius: 0 20px 20px 0; 
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Efecto suave de ondas flotantes */
+        .imageBox::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                circle at 20% 50%, 
+                rgba(255, 255, 255, 0.05) 0%, 
+                transparent 50%
+            ),
+            radial-gradient(
+                circle at 80% 20%, 
+                rgba(255, 255, 255, 0.03) 0%, 
+                transparent 50%
+            ),
+            radial-gradient(
+                circle at 40% 80%, 
+                rgba(255, 255, 255, 0.04) 0%, 
+                transparent 50%
+            );
+            animation: gentleFloat 20s ease-in-out infinite;
+        }
+        
+        @@keyframes gentleFloat {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(10px, -10px) rotate(1deg);
+            }
+            66% {
+                transform: translate(-8px, 8px) rotate(-1deg);
+            }
+        }
+        
+        .imageBox .content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .imageBox h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .imageBox h2 i {
+            margin-right: 15px;
+            color: #fff;
+        }
+        
+        .imageBox p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 15px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .alert i {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f1b0b7 100%);
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .alert-warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 5px;
+            font-size: 14px;
+            color: #dc3545;
+            font-weight: 500;
+        }
+        
+        .footer-empty {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            background: none;
+            box-shadow: none;
+            position: static;
+            width: 100%;
+            font-weight: 400;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .user {
+                flex-direction: column;
+                margin: 20px;
+                min-height: auto;
+            }
+            
+            .formBox {
+                padding: 40px 30px;
+                max-width: none;
+            }
+            
+            .imageBox {
+                padding: 40px 30px;
+                border-radius: 0 0 20px 20px;
+            }
+            
+            .container {
+                padding: 20px 10px;
+            }
+            
+            .back-to-login {
+                top: 15px;
+                left: 15px;
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
+        
+        @@media (max-width: 480px) {
+            .formBox {
+                padding: 30px 20px;
+            }
+            
+            .imageBox {
+                padding: 30px 20px;
+            }
+            
+            .formBox h2 {
+                font-size: 1.7rem;
+            }
+            
+            .imageBox h2 {
+                font-size: 1.8rem;
+            }
+            
+            .back-to-login {
+                top: 10px;
+                left: 10px;
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+        
+        /* Reduce motion para usuarios sensibles */
+        @@media (prefers-reduced-motion: reduce) {
+            .imageBox::before {
+                animation: none;
+            }
+            
+            .user {
+                animation: none;
+            }
+            
+            .alert {
+                animation: none;
+            }
+        }
+    </style>
+
+    <!-- Botón Volver al Login en esquina superior izquierda -->
+    <a href="@Url.Action("Login")" class="back-to-login">
+        <i class="fas fa-arrow-left"></i> Volver al Login
+    </a>
+
+    <div class="container">
+        <div class="user">
+            <div class="formBox">
+                <div class="logo top-logo">
+                    <img src="~/images/image.png" alt="Primar Logo" asp-append-version="true">
+                </div>
+                <form id="nuevaContrasenaForm">
+                    <h2><i class="fas fa-lock"></i> Nueva Contraseña</h2>
+                    <p>
+                        Establece tu nueva contraseña de acceso de forma segura
+                    </p>
+                    <div id="alertContainer"></div>
+                    <div class="inputBox">
+                        <input type="password" id="nuevaContrasena" name="nuevaContrasena" required minlength="6" placeholder="Nueva Contraseña" autocomplete="off">
+                        <button type="button" class="toggle-password" data-target="nuevaContrasena" tabindex="-1">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="inputBox">
+                        <input type="password" id="confirmarContrasena" name="confirmarContrasena" required minlength="6" placeholder="Confirmar Contraseña" autocomplete="off">
+                        <button type="button" class="toggle-password" data-target="confirmarContrasena" tabindex="-1">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <button type="submit" class="btn" id="btnCambiar">
+                        <i class="fas fa-save"></i> Cambiar Contraseña
+                    </button>
+                </form>
+            </div>
+            <div class="imageBox">
+                <div class="content">
+                    <h2><i class="fas fa-shield-alt"></i> Seguridad de Contraseña</h2>
+                    <p>Tu nueva contraseña debe tener al menos 6 caracteres y ser fácil de recordar pero difícil de adivinar.</p>
+                    <p>Mantén tu cuenta segura y no compartas tus credenciales con nadie.</p>
+                    <p>¡Tu seguridad es nuestra prioridad!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-empty">
+        © @DateTime.Now.Year Todos los derechos reservados - Catalina Núñez
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Validar contraseñas
+            $('#confirmarContrasena').on('input', function() {
+                const nueva = $('#nuevaContrasena').val();
+                const confirmar = $(this).val();
+                if (nueva && confirmar && nueva !== confirmar) {
+                    $(this).addClass('is-invalid');
+                    if (!$(this).next('.invalid-feedback').length) {
+                        $(this).after('<div class="invalid-feedback">Las contraseñas no coinciden</div>');
+                    }
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $(this).next('.invalid-feedback').remove();
+                }
+            });
+            
+            // Cambiar contraseña
+            $('#nuevaContrasenaForm').on('submit', function(e) {
+                e.preventDefault();
+                const nuevaContrasena = $('#nuevaContrasena').val().trim();
+                const confirmarContrasena = $('#confirmarContrasena').val().trim();
+                
+                if (nuevaContrasena.length < 6) {
+                    mostrarAlerta('La contraseña debe tener al menos 6 caracteres.', 'warning');
+                    return;
+                }
+                
+                if (nuevaContrasena !== confirmarContrasena) {
+                    mostrarAlerta('Las contraseñas no coinciden.', 'warning');
+                    return;
+                }
+                
+                $('#btnCambiar').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Cambiando...');
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const email = urlParams.get('email');
+                
+                $.ajax({
+                    url: '@Url.Action("CambiarContrasenaConMfa")',
+                    type: 'POST',
+                    data: { email: email, nuevaContrasena: nuevaContrasena, confirmarContrasena: confirmarContrasena },
+                    success: function(response) {
+                        if (response.success) {
+                            mostrarAlerta(response.message, 'success');
+                            setTimeout(function() {
+                                window.location.href = '@Url.Action("Login")';
+                            }, 2000);
+                        } else {
+                            mostrarAlerta(response.message, 'danger');
+                        }
+                    },
+                    error: function() {
+                        mostrarAlerta('Error de conexión. Por favor, intenta nuevamente.', 'danger');
+                    },
+                    complete: function() {
+                        $('#btnCambiar').prop('disabled', false).html('<i class="fas fa-save"></i> Cambiar Contraseña');
+                    }
+                });
+            });
+            
+            function mostrarAlerta(mensaje, tipo) {
+                let tipoClase = 'alert-danger';
+                if (tipo === 'success') tipoClase = 'alert-success';
+                if (tipo === 'warning') tipoClase = 'alert-warning';
+                
+                const alertHtml = `<div class="alert ${tipoClase} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-${tipo === 'success' ? 'check-circle' : tipo === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i>
+                        ${mensaje}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>`;
+                $('#alertContainer').html(alertHtml);
+            }
+            
+            $('#nuevaContrasena').focus();
+        });
+    </script>
+    
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = document.getElementById(this.dataset.target);
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.querySelector('i').classList.remove('fa-eye');
+                    this.querySelector('i').classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    this.querySelector('i').classList.remove('fa-eye-slash');
+                    this.querySelector('i').classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

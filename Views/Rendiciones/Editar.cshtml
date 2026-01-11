@@ -1,0 +1,270 @@
+@model RendicionesPrimar.Models.ViewModels.CrearRendicionViewModel
+@{
+    ViewData["Title"] = "Editar Rendición";
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="fade-in-up">
+    <!-- Header de la página -->
+    <div class="page-header" style="background: var(--primar-white); border-radius: var(--primar-radius); box-shadow: var(--primar-shadow); padding: 32px; margin-bottom: 32px; border-left: 5px solid var(--primar-warning);">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primar-warning) 0%, #f59e0b 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                <i class="fas fa-edit"></i>
+            </div>
+            <div>
+                <h1 style="font-size: 2rem; font-weight: 700; color: var(--primar-text); margin: 0;">Editar Rendición</h1>
+                <p style="color: var(--primar-text-light); margin: 8px 0 0 0; font-size: 1.1rem;">Modifique los detalles de su rendición pendiente</p>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Editar" method="post" enctype="multipart/form-data" style="max-width: 800px; margin: 0 auto;">
+        <input type="hidden" name="id" value="@ViewBag.RendicionId" />
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%); border: 1px solid #ef4444; color: #991b1b; padding: 16px; border-radius: var(--primar-radius); margin-bottom: 24px;"></div>
+
+        <!-- Información Personal -->
+        <div class="form-section" style="background: var(--primar-white); border-radius: var(--primar-radius); box-shadow: var(--primar-shadow); padding: 32px; margin-bottom: 24px; border: 1px solid var(--primar-border);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primar-info) 0%, rgb(19, 100, 137) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--primar-text); margin: 0;">Información Personal (Solo lectura)</h3>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div class="form-group">
+                    <label asp-for="Nombre" class="form-label"></label>
+                    <input asp-for="Nombre" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Apellidos" class="form-label"></label>
+                    <input asp-for="Apellidos" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Rut" class="form-label"></label>
+                    <input asp-for="Rut" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Telefono" class="form-label"></label>
+                    <input asp-for="Telefono" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Cargo" class="form-label"></label>
+                    <input asp-for="Cargo" class="form-control" readonly />
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label asp-for="Departamento" class="form-label"></label>
+                    <input asp-for="Departamento" class="form-control" readonly />
+                </div>
+            </div>
+        </div>
+
+        <!-- Información de la Rendición -->
+        <div class="form-section" style="background: var(--primar-white); border-radius: var(--primar-radius); box-shadow: var(--primar-shadow); padding: 32px; margin-bottom: 24px; border: 1px solid var(--primar-border);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                <div style="width: 40px; height: 40px; background: var(--primar-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--primar-text); margin: 0;">Detalles de la Rendición</h3>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Titulo" class="form-label">
+                    <i class="fas fa-heading" style="margin-right: 8px; color: var(--primar-primary);"></i>
+                    Título de la rendición *
+                </label>
+                <input asp-for="Titulo" class="form-control" placeholder="Ej: Gastos de viaje a Santiago - Marzo 2024" required />
+                <span asp-validation-for="Titulo" class="text-danger" style="color: var(--primar-danger); font-size: 0.85rem; margin-top: 4px;"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Descripcion" class="form-label">
+                    <i class="fas fa-align-left" style="margin-right: 8px; color: var(--primar-primary);"></i>
+                    Descripción detallada *
+                </label>
+                <textarea asp-for="Descripcion" class="form-control" rows="4" placeholder="Describa los gastos realizados, el propósito del viaje/actividad, y cualquier información adicional relevante..." required></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger" style="color: var(--primar-danger); font-size: 0.85rem; margin-top: 4px;"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MontoTotal" class="form-label">
+                    <i class="fas fa-dollar-sign" style="margin-right: 8px; color: var(--primar-primary);"></i>
+                    Monto total *
+                </label>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--primar-text-light); font-weight: 600;">$</span>
+                    <input asp-for="MontoTotal" class="form-control" type="number" step="0.01" min="0" placeholder="0.00" required style="padding-left: 40px;" />
+                </div>
+                <span asp-validation-for="MontoTotal" class="text-danger" style="color: var(--primar-danger); font-size: 0.85rem; margin-top: 4px;"></span>
+            </div>
+        </div>
+
+        <!-- Documentos Adjuntos Existentes -->
+        @if (ViewBag.ArchivosExistentes != null && ((List<ArchivoAdjunto>)ViewBag.ArchivosExistentes).Any())
+        {
+            <div class="form-section" style="background: var(--primar-white); border-radius: var(--primar-radius); box-shadow: var(--primar-shadow); padding: 32px; margin-bottom: 24px; border: 1px solid var(--primar-border);">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primar-success) 0%, #059669 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="fas fa-paperclip"></i>
+                    </div>
+                    <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--primar-text); margin: 0;">Documentos Adjuntos Existentes</h3>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+                    @foreach (var archivo in (List<ArchivoAdjunto>)ViewBag.ArchivosExistentes)
+                    {
+                        <div style="background: var(--primar-secondary); border-radius: var(--primar-radius-sm); padding: 16px; border: 1px solid var(--primar-border);">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 40px; height: 40px; background: var(--primar-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                                    <i class="fas fa-file"></i>
+                                </div>
+                                <div style="flex: 1;">
+                                    <p style="font-weight: 500; color: var(--primar-text); margin: 0; font-size: 0.9rem;">@archivo.NombreArchivo</p>
+                                    <p style="color: var(--primar-text-light); margin: 4px 0 0 0; font-size: 0.8rem;">@archivo.TipoArchivo • @((archivo.TamanoArchivo / 1024.0 / 1024.0).ToString("F2")) MB</p>
+                                </div>
+                                <a href="@Url.Action("DescargarArchivo", "Rendiciones", new { id = archivo.Id })" 
+                                   style="color: var(--primar-primary); text-decoration: none; padding: 8px; border-radius: 50%; transition: var(--primar-transition);" 
+                                   onmouseover="this.style.background='rgba(37, 99, 235, 0.1)'" 
+                                   onmouseout="this.style.background='transparent'">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Nuevos Documentos Adjuntos -->
+        <div class="form-section" style="background: var(--primar-white); border-radius: var(--primar-radius); box-shadow: var(--primar-shadow); padding: 32px; margin-bottom: 24px; border: 1px solid var(--primar-border);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primar-info) 0%, #3b82f6 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--primar-text); margin: 0;">Agregar Nuevos Documentos</h3>
+            </div>
+
+            <div class="form-group">
+                <label for="archivos" class="form-label">
+                    <i class="fas fa-upload" style="margin-right: 8px; color: var(--primar-primary);"></i>
+                    Seleccionar archivos adicionales
+                </label>
+                <div style="border: 2px dashed var(--primar-border); border-radius: var(--primar-radius); padding: 32px; text-align: center; background: var(--primar-secondary); transition: var(--primar-transition);" 
+                     onmouseover="this.style.borderColor='var(--primar-primary)'; this.style.background='rgba(37, 99, 235, 0.05)'" 
+                     onmouseout="this.style.borderColor='var(--primar-border)'; this.style.background='var(--primar-secondary)'">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primar-primary); margin-bottom: 16px;"></i>
+                    <p style="color: var(--primar-text); font-weight: 500; margin-bottom: 8px;">Arrastra y suelta archivos aquí o haz clic para seleccionar</p>
+                    <p style="color: var(--primar-text-light); font-size: 0.9rem; margin-bottom: 16px;">Formatos permitidos: PDF, JPG, PNG, DOC, DOCX (Máx. 10MB por archivo)</p>
+                    <input type="file" name="archivos" id="archivos" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" 
+                           style="display: none;" onchange="mostrarArchivosSeleccionados(this)" />
+                    <button type="button" onclick="document.getElementById('archivos').click()" 
+                            style="background: var(--primar-gradient); color: white; border: none; padding: 12px 24px; border-radius: var(--primar-radius-sm); font-weight: 500; cursor: pointer; transition: var(--primar-transition);">
+                        <i class="fas fa-folder-open" style="margin-right: 8px;"></i>
+                        Seleccionar Archivos
+                    </button>
+                </div>
+                <div id="archivos-seleccionados" style="margin-top: 16px;"></div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="form-actions" style="display: flex; gap: 16px; justify-content: flex-end; margin-top: 32px;">
+            <a href="@Url.Action("Detalle", "Rendiciones", new { id = ViewBag.RendicionId })" class="btn btn-secondary" style="text-decoration: none;">
+                <i class="fas fa-times" style="margin-right: 8px;"></i>
+                Cancelar
+            </a>
+            <button type="submit" class="btn btn-warning">
+                <i class="fas fa-save" style="margin-right: 8px;"></i>
+                Guardar Cambios
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function mostrarArchivosSeleccionados(input) {
+        const contenedor = document.getElementById('archivos-seleccionados');
+        contenedor.innerHTML = '';
+        
+        if (input.files.length > 0) {
+            const lista = document.createElement('div');
+            lista.style.marginTop = '16px';
+            
+            for (let i = 0; i < input.files.length; i++) {
+                const archivo = input.files[i];
+                const item = document.createElement('div');
+                item.style.display = 'flex';
+                item.style.alignItems = 'center';
+                item.style.gap = '12px';
+                item.style.padding = '12px';
+                item.style.background = 'var(--primar-white)';
+                item.style.borderRadius = 'var(--primar-radius-sm)';
+                item.style.border = '1px solid var(--primar-border)';
+                item.style.marginBottom = '8px';
+                
+                const icono = document.createElement('i');
+                icono.className = 'fas fa-file';
+                icono.style.color = 'var(--primar-primary)';
+                icono.style.fontSize = '1.2rem';
+                
+                const info = document.createElement('div');
+                info.style.flex = '1';
+                
+                const nombre = document.createElement('p');
+                nombre.textContent = archivo.name;
+                nombre.style.margin = '0';
+                nombre.style.fontWeight = '500';
+                nombre.style.color = 'var(--primar-text)';
+                
+                const tamano = document.createElement('p');
+                tamano.textContent = `(${(archivo.size / 1024 / 1024).toFixed(2)} MB)`;
+                tamano.style.margin = '4px 0 0 0';
+                tamano.style.fontSize = '0.85rem';
+                tamano.style.color = 'var(--primar-text-light)';
+                
+                info.appendChild(nombre);
+                info.appendChild(tamano);
+                
+                item.appendChild(icono);
+                item.appendChild(info);
+                lista.appendChild(item);
+            }
+            
+            contenedor.appendChild(lista);
+        }
+    }
+
+    // Permitir arrastrar y soltar archivos
+    const dropZone = document.querySelector('input[type="file"]').parentElement;
+    
+    dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.style.borderColor = 'var(--primar-primary)';
+        this.style.background = 'rgba(37, 99, 235, 0.05)';
+    });
+    
+    dropZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.style.borderColor = 'var(--primar-border)';
+        this.style.background = 'var(--primar-secondary)';
+    });
+    
+    dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.style.borderColor = 'var(--primar-border)';
+        this.style.background = 'var(--primar-secondary)';
+        
+        const files = e.dataTransfer.files;
+        const input = document.getElementById('archivos');
+        input.files = files;
+        mostrarArchivosSeleccionados(input);
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

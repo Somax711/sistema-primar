@@ -1,0 +1,1030 @@
+@model RendicionesPrimar.Models.ViewModels.CrearRendicionViewModel
+@{
+    ViewData["Title"] = "Crear Rendición";
+}
+
+<style>
+    :root {
+        --primar-primary: #215c8e;
+        --primar-primary-dark: #1a4b73;
+        --primar-primary-light: #357ab7;
+        --primar-secondary: #f1f5f9;
+        --primar-success: #10b981;
+        --primar-warning: #f59e0b;
+        --primar-danger: #ef4444;
+        --primar-info: #06b6d4;
+        --primar-text: #1e293b;
+        --primar-text-light: #64748b;
+        --primar-background: #f8fafc;
+        --primar-white: #ffffff;
+        --primar-border: #e2e8f0;
+        --primar-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --primar-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --primar-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --primar-radius: 16px;
+        --primar-radius-sm: 8px;
+        --primar-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --primar-gradient: linear-gradient(135deg, #215c8e 0%, #357ab7 100%);
+        --gradient-background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    body {
+        background: var(--gradient-background);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        color: var(--primar-text);
+        min-height: 100vh;
+    }
+
+    .fade-in-up {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px;
+        animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-header {
+        background: var(--primar-white);
+        border-radius: var(--primar-radius);
+        box-shadow: var(--primar-shadow-lg);
+        padding: 40px;
+        margin-bottom: 40px;
+        border: 1px solid var(--primar-border);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -60%;
+        right: -30%;
+        width: 300px;
+        height: 300px;
+        background: var(--primar-gradient);
+        border-radius: 50%;
+        opacity: 0.05;
+        transform: rotate(25deg);
+    }
+
+    .page-header-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .page-header-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--primar-gradient);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primar-white);
+        font-size: 2rem;
+        box-shadow: var(--primar-shadow);
+        border: 4px solid var(--primar-white);
+    }
+
+    .page-header-text h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: var(--primar-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0;
+    }
+
+    .page-header-text p {
+        color: var(--primar-text-light);
+        margin: 12px 0 0 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .alert {
+        padding: 20px 24px;
+        border-radius: var(--primar-radius);
+        margin-bottom: 32px;
+        font-weight: 600;
+        box-shadow: var(--primar-shadow);
+        border: 1px solid transparent;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%);
+        border-color: #ef4444;
+        color: #991b1b;
+    }
+
+    .alert-emergente-roja {
+        background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%);
+        border: 2px solid #ef4444;
+        color: #991b1b;
+        padding: 24px 28px;
+        border-radius: var(--primar-radius);
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 40px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: var(--primar-shadow-lg);
+        animation: fadeInDown 0.7s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .alert-emergente-roja i {
+        color: #ef4444;
+        font-size: 2.2rem;
+    }
+
+    @@keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-section {
+        background: var(--primar-white);
+        border-radius: var(--primar-radius);
+        box-shadow: var(--primar-shadow-lg);
+        padding: 40px;
+        margin-bottom: 32px;
+        border: 1px solid var(--primar-border);
+        transition: var(--primar-transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -25%;
+        width: 200px;
+        height: 200px;
+        background: var(--primar-gradient);
+        border-radius: 50%;
+        opacity: 0.02;
+        transform: rotate(45deg);
+    }
+
+    .form-section:hover {
+        box-shadow: var(--primar-shadow-hover);
+        transform: translateY(-2px);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .section-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primar-white);
+        font-size: 1.3rem;
+        box-shadow: var(--primar-shadow);
+    }
+
+    .section-icon.user { background: linear-gradient(135deg, var(--primar-info) 0%, #0891b2 100%); }
+    .section-icon.invoice { background: var(--primar-gradient); }
+    .section-icon.attachment { background: linear-gradient(135deg, var(--primar-success) 0%, #059669 100%); }
+
+    .section-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--primar-text);
+        margin: 0;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .form-grid.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--primar-text);
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-label i {
+        color: var(--primar-primary);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 16px 20px;
+        border: 2px solid var(--primar-border);
+        border-radius: var(--primar-radius-sm);
+        font-size: 1rem;
+        color: var(--primar-text);
+        background: var(--primar-white);
+        transition: var(--primar-transition);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primar-primary-light);
+        box-shadow: 0 0 0 3px rgba(53, 122, 183, 0.1);
+        background: linear-gradient(135deg, var(--primar-white) 0%, #f8fafc 100%);
+        transform: translateY(-1px);
+    }
+
+    .form-control[readonly] {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        color: var(--primar-text-light);
+        cursor: not-allowed;
+    }
+
+    .form-control::placeholder {
+        color: var(--primar-text-light);
+        font-weight: 400;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .money-input {
+        position: relative;
+    }
+
+    .money-symbol {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primar-text-light);
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .money-input .form-control {
+        padding-left: 50px;
+    }
+
+    .file-upload-area {
+        border: 3px dashed var(--primar-border);
+        border-radius: var(--primar-radius);
+        padding: 48px;
+        text-align: center;
+        background: linear-gradient(135deg, var(--primar-secondary) 0%, #f8fafc 100%);
+        transition: var(--primar-transition);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .file-upload-area::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: 50%;
+        width: 200px;
+        height: 200px;
+        background: var(--primar-gradient);
+        border-radius: 50%;
+        opacity: 0.02;
+        transform: translate(-50%, -50%);
+    }
+
+    .file-upload-area:hover {
+        border-color: var(--primar-primary);
+        background: linear-gradient(135deg, rgba(33, 92, 142, 0.05) 0%, rgba(53, 122, 183, 0.03) 100%);
+        transform: translateY(-2px);
+        box-shadow: var(--primar-shadow);
+    }
+
+    .upload-icon {
+        font-size: 4rem;
+        color: var(--primar-primary);
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .upload-text {
+        color: var(--primar-text);
+        font-weight: 600;
+        margin-bottom: 12px;
+        font-size: 1.1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .upload-subtext {
+        color: var(--primar-text-light);
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .upload-button {
+        background: var(--primar-gradient);
+        color: var(--primar-white);
+        border: none;
+        padding: 14px 28px;
+        border-radius: var(--primar-radius-sm);
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--primar-transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: var(--primar-shadow);
+        position: relative;
+        z-index: 1;
+    }
+
+    .upload-button:hover {
+        background: var(--primar-primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--primar-shadow-lg);
+    }
+
+    .file-list {
+        margin-top: 20px;
+    }
+
+    .file-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        background: var(--primar-white);
+        border-radius: var(--primar-radius-sm);
+        border: 1px solid var(--primar-border);
+        margin-bottom: 12px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        transition: var(--primar-transition);
+    }
+
+    .file-item:hover {
+        box-shadow: var(--primar-shadow);
+        transform: translateY(-1px);
+    }
+
+    .file-icon {
+        color: var(--primar-primary);
+        font-size: 1.4rem;
+    }
+
+    .file-info {
+        flex: 1;
+    }
+
+    .file-name {
+        margin: 0;
+        font-weight: 600;
+        color: var(--primar-text);
+        font-size: 0.95rem;
+    }
+
+    .file-size {
+        margin: 4px 0 0 0;
+        font-size: 0.85rem;
+        color: var(--primar-text-light);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 20px;
+        justify-content: flex-end;
+        margin-top: 48px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn {
+        padding: 16px 32px;
+        border-radius: var(--primar-radius-sm);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--primar-transition);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: var(--primar-shadow);
+        border: none;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--primar-shadow-lg);
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: var(--primar-gradient);
+        color: var(--primar-white);
+    }
+
+    .btn-primary:hover {
+        background: var(--primar-primary-dark);
+        color: var(--primar-white);
+    }
+
+    .btn-primary:disabled {
+        background: linear-gradient(135deg, var(--primar-border) 0%, #d1d5db 100%);
+        color: var(--primar-text-light);
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, var(--primar-secondary) 0%, #e2e8f0 100%);
+        color: var(--primar-text);
+        border: 1px solid var(--primar-border);
+    }
+
+    .btn-secondary:hover {
+        background: linear-gradient(135deg, var(--primar-border) 0%, #d1d5db 100%);
+        color: var(--primar-text);
+    }
+
+    .text-danger {
+        color: var(--primar-danger);
+        font-size: 0.9rem;
+        margin-top: 6px;
+        font-weight: 500;
+    }
+
+    .footer-credit {
+        text-align: center;
+        color: var(--primar-text-light);
+        font-size: 0.95rem;
+        margin: 48px 0 24px 0;
+        opacity: 0.8;
+        font-weight: 500;
+        background: var(--primar-white);
+        padding: 20px;
+        border-radius: var(--primar-radius);
+        box-shadow: var(--primar-shadow);
+        border: 1px solid var(--primar-border);
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .fade-in-up {
+            padding: 20px;
+        }
+
+        .page-header {
+            padding: 28px;
+        }
+
+        .page-header-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 16px;
+        }
+
+        .page-header-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+
+        .page-header-text h1 {
+            font-size: 2rem;
+        }
+
+        .page-header-text p {
+            font-size: 1.1rem;
+        }
+
+        .form-section {
+            padding: 28px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+        }
+
+        .file-upload-area {
+            padding: 32px 20px;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+            padding: 14px 24px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .fade-in-up {
+            padding: 16px;
+        }
+
+        .page-header {
+            padding: 20px;
+        }
+
+        .page-header-text h1 {
+            font-size: 1.8rem;
+        }
+
+        .form-section {
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+        }
+
+        .form-control {
+            padding: 12px 16px;
+            font-size: 0.95rem;
+        }
+
+        .file-upload-area {
+            padding: 24px 16px;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            font-size: 0.95rem;
+        }
+    }
+
+    /* Mejorar legibilidad en pantallas con zoom */
+    @@media (min-resolution: 120dpi) {
+        body {
+            font-size: 16px;
+        }
+        
+        .page-header-text h1 {
+            font-size: 2.2rem;
+        }
+        
+        .form-control {
+            font-size: 0.95rem;
+        }
+        
+        .btn {
+            font-size: 0.95rem;
+        }
+    }
+</style>
+
+@if (ViewBag.PerfilIncompleto == true)
+{
+    <div class="alert-emergente-roja">
+        <i class="fas fa-exclamation-triangle"></i>
+        @Html.Raw(ViewBag.MensajeEmergente)
+    </div>
+}
+
+<div class="fade-in-up">
+    <!-- Header de la página -->
+    <div class="page-header">
+        <div class="page-header-content">
+            <div class="page-header-icon">
+                <i class="fas fa-plus"></i>
+            </div>
+            <div class="page-header-text">
+                <h1>Nueva Rendición</h1>
+                <p>Complete el formulario con los detalles de sus gastos</p>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Crear" method="post" enctype="multipart/form-data">
+        @if (ViewBag.PerfilIncompleto == true)
+        {
+            <fieldset disabled style="border:0;padding:0;margin:0;">
+                <div class="alert-validation">
+                    <span class="icon-error"><i class="fas fa-times"></i></span>
+                    <div>
+                        <strong>Por favor corrige los siguientes errores:</strong>
+                        <div asp-validation-summary="ModelOnly"></div>
+                    </div>
+                </div>
+
+                <!-- Información Personal -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon user">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="section-title">Información Personal (Solo lectura)</h3>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label asp-for="Nombre" class="form-label"></label>
+                            <input asp-for="Nombre" class="form-control" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Apellidos" class="form-label"></label>
+                            <input asp-for="Apellidos" class="form-control" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Rut" class="form-label"></label>
+                            <input asp-for="Rut" class="form-control" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Telefono" class="form-label"></label>
+                            <input asp-for="Telefono" class="form-control" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Cargo" class="form-label"></label>
+                            <input asp-for="Cargo" class="form-control" readonly />
+                        </div>
+                        <div class="form-group full-width">
+                            <label asp-for="Departamento" class="form-label"></label>
+                            <input asp-for="Departamento" class="form-control" readonly />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de la Rendición -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon invoice">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <h3 class="section-title">Detalles de la Rendición</h3>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Titulo" class="form-label">
+                            <i class="fas fa-heading"></i>
+                            Título de la rendición *
+                        </label>
+                        <input asp-for="Titulo" class="form-control" placeholder="Ej: Gastos de viaje a Santiago - Marzo 2024" required />
+                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Descripcion" class="form-label">
+                            <i class="fas fa-align-left"></i>
+                            Descripción detallada *
+                        </label>
+                        <textarea asp-for="Descripcion" class="form-control" rows="4" placeholder="Describa los gastos realizados, el propósito del viaje/actividad, y cualquier información adicional relevante..." required></textarea>
+                        <span asp-validation-for="Descripcion" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="MontoTotal" class="form-label">
+                            <i class="fas fa-dollar-sign"></i>
+                            Monto total *
+                        </label>
+                        <div class="money-input">
+                            <span class="money-symbol">$</span>
+                            <input asp-for="MontoTotal" class="form-control" type="number" step="0.01" min="0" placeholder="0.00" required value="" />
+                        </div>
+                        <span asp-validation-for="MontoTotal" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Documentos Adjuntos -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon attachment">
+                            <i class="fas fa-paperclip"></i>
+                        </div>
+                        <h3 class="section-title">Documentos Adjuntos</h3>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="archivos" class="form-label">
+                            <i class="fas fa-upload"></i>
+                            Seleccionar archivos
+                        </label>
+                        <div class="file-upload-area">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <p class="upload-text">Arrastra y suelta archivos aquí o haz clic para seleccionar</p>
+                            <p class="upload-subtext">Formatos permitidos: PDF, JPG, PNG, DOC, DOCX (Máx. 10MB por archivo)</p>
+                            <input type="file" name="archivos" id="archivos" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" 
+                                   style="display: none;" onchange="mostrarArchivosSeleccionados(this)" />
+                            <button type="button" class="upload-button" onclick="abrirSelectorArchivos(event)">
+                                <i class="fas fa-folder-open"></i>
+                                Seleccionar Archivos
+                            </button>
+                        </div>
+                        <div id="archivos-seleccionados" class="file-list"></div>
+                    </div>
+                </div>
+            </fieldset>
+        }
+        else
+        {
+            @if (!ViewContext.HttpContext.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase) && !ViewData.ModelState.IsValid)
+            {
+                <div class="alert-validation">
+                    <span class="icon-error"><i class="fas fa-times"></i></span>
+                    <div>
+                        <strong>Por favor corrige los siguientes errores:</strong>
+                        <div asp-validation-summary="ModelOnly"></div>
+                    </div>
+                </div>
+            }
+
+            <!-- Información Personal -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon user">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="section-title">Información Personal (Solo lectura)</h3>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label asp-for="Nombre" class="form-label"></label>
+                        <input asp-for="Nombre" class="form-control" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Apellidos" class="form-label"></label>
+                        <input asp-for="Apellidos" class="form-control" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Rut" class="form-label"></label>
+                        <input asp-for="Rut" class="form-control" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Telefono" class="form-label"></label>
+                        <input asp-for="Telefono" class="form-control" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Cargo" class="form-label"></label>
+                        <input asp-for="Cargo" class="form-control" readonly />
+                    </div>
+                    <div class="form-group full-width">
+                        <label asp-for="Departamento" class="form-label"></label>
+                        <input asp-for="Departamento" class="form-control" readonly />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de la Rendición -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon invoice">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <h3 class="section-title">Detalles de la Rendición</h3>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Titulo" class="form-label">
+                        <i class="fas fa-heading"></i>
+                        Título de la rendición *
+                    </label>
+                    <input asp-for="Titulo" class="form-control" placeholder="Ej: Gastos de viaje a Santiago - Marzo 2024" required />
+                    <span asp-validation-for="Titulo" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Descripcion" class="form-label">
+                        <i class="fas fa-align-left"></i>
+                        Descripción detallada *
+                    </label>
+                    <textarea asp-for="Descripcion" class="form-control" rows="4" placeholder="Describa los gastos realizados, el propósito del viaje/actividad, y cualquier información adicional relevante..." required></textarea>
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="MontoTotal" class="form-label">
+                        <i class="fas fa-dollar-sign"></i>
+                        Monto total *
+                    </label>
+                    <div class="money-input">
+                        <span class="money-symbol">$</span>
+                        <input asp-for="MontoTotal" class="form-control" type="number" step="0.01" min="0" placeholder="0.00" required value="" />
+                    </div>
+                    <span asp-validation-for="MontoTotal" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Documentos Adjuntos -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon attachment">
+                        <i class="fas fa-paperclip"></i>
+                    </div>
+                    <h3 class="section-title">Documentos Adjuntos</h3>
+                </div>
+
+                <div class="form-group">
+                    <label for="archivos" class="form-label">
+                        <i class="fas fa-upload"></i>
+                        Seleccionar archivos
+                    </label>
+                    <div class="file-upload-area">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <p class="upload-text">Arrastra y suelta archivos aquí o haz clic para seleccionar</p>
+                        <p class="upload-subtext">Formatos permitidos: PDF, JPG, PNG, DOC, DOCX (Máx. 10MB por archivo)</p>
+                        <input type="file" name="archivos" id="archivos" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" 
+                               style="display: none;" onchange="mostrarArchivosSeleccionados(this)" />
+                        <button type="button" class="upload-button" onclick="abrirSelectorArchivos(event)">
+                            <i class="fas fa-folder-open"></i>
+                            Seleccionar Archivos
+                        </button>
+                    </div>
+                    <div id="archivos-seleccionados" class="file-list"></div>
+                </div>
+            </div>
+        }
+        
+        <div class="form-actions">
+            <a href="@Url.Action("Index", "Rendiciones")" class="btn btn-secondary">
+                <i class="fas fa-times"></i>
+                Cancelar
+            </a>
+            <button type="submit" class="btn btn-primary" @(ViewBag.PerfilIncompleto == true ? "disabled" : "")>
+                <i class="fas fa-paper-plane"></i>
+                Enviar Rendición
+            </button>
+        </div>
+    </form>
+</div>
+
+<footer style="text-align:center; color:#64748b; font-size:0.95rem; margin: 32px 0 12px 0; opacity:0.8; font-weight:500; background:transparent; padding:12px; border-radius:12px;">
+    Todos los derechos reservados
+</footer>
+
+<script>
+    function mostrarArchivosSeleccionados(input) {
+        const contenedor = document.getElementById('archivos-seleccionados');
+        contenedor.innerHTML = '';
+        if (input.files.length > 0) {
+            for (let i = 0; i < input.files.length; i++) {
+                const archivo = input.files[i];
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                const icono = document.createElement('i');
+                icono.className = 'fas fa-file file-icon';
+                const info = document.createElement('div');
+                info.className = 'file-info';
+                const nombre = document.createElement('p');
+                nombre.className = 'file-name';
+                nombre.textContent = archivo.name;
+                const tamano = document.createElement('p');
+                tamano.className = 'file-size';
+                tamano.textContent = `(${(archivo.size / 1024 / 1024).toFixed(2)} MB)`;
+                info.appendChild(nombre);
+                info.appendChild(tamano);
+                item.appendChild(icono);
+                item.appendChild(info);
+                contenedor.appendChild(item);
+            }
+        }
+    }
+
+    // Refuerzo: evitar submit accidental al cambiar archivos
+    document.getElementById('archivos').addEventListener('change', function(e) {
+        e.stopPropagation(); // Evita burbujeo
+    });
+
+    function abrirSelectorArchivos(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        document.getElementById('archivos').click();
+    }
+
+    // SUBIDA AJAX DEL FORMULARIO
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        if (!form) return;
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            let btn = form.querySelector('button[type="submit"]');
+            let originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+            // Usa el FormData directamente del formulario
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(async response => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                if (response.ok) {
+                    alert('¡Rendición enviada exitosamente!');
+                    window.location.href = '/Rendiciones';
+                } else if (response.status === 401 || response.status === 403) {
+                    alert('Sesión expirada o sin permisos. Por favor, vuelve a iniciar sesión.');
+                    window.location.href = '/Account/Login';
+                } else {
+                    let text = await response.text();
+                    alert('Error al enviar la rendición.\n' + text);
+                }
+            })
+            .catch(error => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                alert('Error de red al enviar la rendición.');
+            });
+        });
+    });
+
+    // Formateo automático de RUT
+    const rutElement = document.getElementById('Rut');
+    if (rutElement) {
+        rutElement.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^0-9kK]/g, '');
+            if (value.length > 1) {
+                value = value.slice(0, -1) + '-' + value.slice(-1);
+            }
+            e.target.value = value;
+        });
+    }
+
+    // Formateo automático de teléfono
+    const telefonoElement = document.getElementById('Telefono');
+    if (telefonoElement) {
+        telefonoElement.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^0-9+]/g, '');
+            if (value.startsWith('+56')) {
+                if (value.length > 3) value = value.slice(0, 3) + ' ' + value.slice(3);
+                if (value.length > 7) value = value.slice(0, 7) + ' ' + value.slice(7);
+                if (value.length > 12) value = value.slice(0, 12) + ' ' + value.slice(12);
+            }
+            e.target.value = value;
+        });
+    }
+</script>

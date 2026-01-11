@@ -1,0 +1,885 @@
+@model RendicionesPrimar.Models.ViewModels.EditarUsuarioViewModel
+
+@{
+    ViewData["Title"] = "Editar Usuario";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        @TempData["SuccessMessage"]
+        <button type="button" class="alert-close" onclick="this.parentElement.style.display='none'">×</button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i>
+        @TempData["ErrorMessage"]
+        <button type="button" class="alert-close" onclick="this.parentElement.style.display='none'">×</button>
+    </div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Errores en el formulario:</strong>
+        <ul>
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <li>@error.ErrorMessage</li>
+        }
+        </ul>
+    </div>
+}
+
+<div class="editar-usuario-container">
+    <!-- Header de página -->
+    <div class="page-header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="page-title">
+                    <i class="fas fa-user-edit"></i>
+                    <span>Editar Usuario</span>
+                </h1>
+                <p class="page-subtitle">Modifique la información del usuario seleccionado</p>
+            </div>
+            <div class="header-actions">
+                <a href="@Url.Action("Index", "ControlUsuarios")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver a la Lista</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario principal -->
+    <div class="form-container">
+        <form asp-action="EditarUsuario" method="post" class="user-form">
+            <input type="hidden" asp-for="Id" />
+            
+            <!-- Sección: Información Personal -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon bg-primary">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="section-title">
+                        <h3>Información Personal</h3>
+                        <p>Datos básicos de identificación del usuario</p>
+                    </div>
+                </div>
+                
+                <div class="section-content">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label asp-for="Nombre" class="form-label">
+                                <i class="fas fa-user"></i>
+                                Nombre
+                            </label>
+                            <input asp-for="Nombre" class="form-control" placeholder="Ingrese el nombre del usuario" />
+                            <span asp-validation-for="Nombre" class="form-error"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Apellidos" class="form-label">
+                                <i class="fas fa-id-card"></i>
+                                Apellidos
+                            </label>
+                            <input asp-for="Apellidos" class="form-control" placeholder="Apellidos completos" />
+                            <span asp-validation-for="Apellidos" class="form-error"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Rut" class="form-label">
+                                <i class="fas fa-id-badge"></i>
+                                RUT
+                            </label>
+                            <input asp-for="Rut" class="form-control" placeholder="12.345.678-9" />
+                            <span asp-validation-for="Rut" class="form-error"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-flag"></i>
+                                País
+                            </label>
+                            <select id="paisTelefono" class="form-control">
+                                <option value="cl">Chile</option>
+                                <option value="ar">Argentina</option>
+                                <option value="pe">Perú</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Telefono" class="form-label">
+                                <i class="fas fa-phone"></i>
+                                Teléfono
+                            </label>
+                            <input asp-for="Telefono" class="form-control" placeholder="Ej: +56 9 1234 5678" />
+                            <span asp-validation-for="Telefono" class="form-error"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Información de Acceso -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon bg-success">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <div class="section-title">
+                        <h3>Información de Acceso</h3>
+                        <p>Credenciales para el ingreso al sistema</p>
+                    </div>
+                </div>
+                
+                <div class="section-content">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label asp-for="Email" class="form-label">
+                                <i class="fas fa-envelope"></i>
+                                Email Corporativo
+                            </label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="usuario@primar.cl" />
+                            <span asp-validation-for="Email" class="form-error"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Password" class="form-label">
+                                <i class="fas fa-lock"></i>
+                                Nueva Contraseña
+                            </label>
+                            <div class="input-group" style="position:relative;">
+                                <input asp-for="Password" type="password" class="form-control" placeholder="********" autocomplete="new-password" id="passwordField" style="padding-right:38px;" />
+                                <button type="button" tabindex="-1" class="btn-eye-password" id="togglePassword" onclick="togglePasswordEdit()" aria-label="Mostrar/ocultar contraseña">
+                                    <i class="fas fa-eye" id="eyeIcon"></i>
+                                </button>
+                            </div>
+                            <div class="form-help">
+                                <i class="fas fa-info-circle"></i>
+                                La contraseña debe tener al menos 6 caracteres <b>solo si deseas cambiarla</b>. Si no, deja el campo vacío.
+                            </div>
+                            <span asp-validation-for="Password" class="form-error"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Información Laboral -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon bg-info">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="section-title">
+                        <h3>Información Laboral</h3>
+                        <p>Cargo, departamento y rol dentro de la organización</p>
+                    </div>
+                </div>
+                
+                <div class="section-content">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label asp-for="Cargo" class="form-label">
+                                <i class="fas fa-user-tie"></i>
+                                Cargo
+                            </label>
+                            <input asp-for="Cargo" class="form-control" placeholder="Ej: Analista de Finanzas, Supervisor de Ventas" />
+                            <span asp-validation-for="Cargo" class="form-error"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Departamento" class="form-label">
+                                <i class="fas fa-building"></i>
+                                Departamento
+                            </label>
+                            <input asp-for="Departamento" class="form-control" placeholder="Ej: Finanzas, Recursos Humanos, Ventas" />
+                            <span asp-validation-for="Departamento" class="form-error"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Estado del Usuario -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon bg-warning">
+                        <i class="fas fa-toggle-on"></i>
+                    </div>
+                    <div class="section-title">
+                        <h3>Estado del Usuario</h3>
+                        <p>Configure el estado de acceso al sistema</p>
+                    </div>
+                </div>
+                
+                <div class="section-content">
+                    <div class="form-grid-single">
+                        <div class="form-group">
+                            <div class="switch-container">
+                                <label class="switch">
+                                    <input asp-for="Activo" type="checkbox" />
+                                    <span class="slider"></span>
+                                </label>
+                                <div class="switch-label">
+                                    <span class="switch-title">Usuario Activo</span>
+                                    <span class="switch-description">Permite el acceso del usuario al sistema</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="form-actions">
+                <div class="actions-content">
+                    <div class="action-group">
+                        <a href="@Url.Action("Index", "ControlUsuarios")" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times"></i>
+                            <span>Cancelar</span>
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save"></i>
+                            <span>Guardar Cambios</span>
+                        </button>
+                    </div>
+                    <div class="action-help">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Los cambios se aplicarán inmediatamente después de guardar</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Variables corporativas idénticas */
+:root {
+    --primar-primary: rgb(31, 90, 136);
+    --primar-primary-dark: rgb(31, 90, 136);
+    --primar-primary-light: rgb(31, 90, 136);
+    --primar-secondary: #f1f5f9;
+    --primar-success: #10b981;
+    --primar-warning: #f59e0b;
+    --primar-danger: #ef4444;
+    --primar-info: #06b6d4;
+    --primar-text: #1e293b;
+    --primar-text-light: #64748b;
+    --primar-background: #f8fafc;
+    --primar-white: #ffffff;
+    --primar-border: #e2e8f0;
+    --primar-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --primar-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --primar-radius: 12px;
+    --primar-radius-sm: 8px;
+    --primar-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --primar-gradient: linear-gradient(135deg, var(--primar-primary) 0%, var(--primar-primary-light) 100%);
+}
+
+/* Contenedor principal */
+.editar-usuario-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* Header de página */
+.page-header {
+    background: var(--primar-white);
+    border-radius: var(--primar-radius);
+    box-shadow: var(--primar-shadow);
+    margin-bottom: 32px;
+    overflow: hidden;
+}
+
+.header-content {
+    background: var(--primar-gradient);
+    color: white;
+    padding: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.page-title i {
+    font-size: 2.5rem;
+    opacity: 0.9;
+}
+
+.page-subtitle {
+    margin: 8px 0 0 0;
+    opacity: 0.9;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.header-actions .btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.header-actions .btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+    text-decoration: none;
+}
+
+/* Contenedor del formulario */
+.form-container {
+    background: var(--primar-white);
+    border-radius: var(--primar-radius);
+    box-shadow: var(--primar-shadow);
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Secciones del formulario */
+.form-section {
+    border-bottom: 1px solid var(--primar-border);
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 32px;
+    background: var(--primar-secondary);
+    border-bottom: 1px solid var(--primar-border);
+}
+
+.section-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: var(--primar-shadow);
+}
+
+.section-icon.bg-primary {
+    background: var(--primar-gradient);
+}
+
+.section-icon.bg-success {
+    background: linear-gradient(135deg, var(--primar-success) 0%, #059669 100%);
+}
+
+.section-icon.bg-info {
+    background: linear-gradient(135deg, var(--primar-info) 0%, #0891b2 100%);
+}
+
+.section-icon.bg-warning {
+    background: linear-gradient(135deg, var(--primar-warning) 0%, #d97706 100%);
+}
+
+.section-title h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primar-text);
+}
+
+.section-title p {
+    margin: 4px 0 0 0;
+    color: var(--primar-text-light);
+    font-size: 0.95rem;
+}
+
+.section-content {
+    padding: 32px;
+}
+
+/* Grid del formulario */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.form-grid-single {
+    display: block;
+}
+
+/* Campos del formulario */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--primar-text);
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.form-label i {
+    color: var(--primar-primary);
+    font-size: 1rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid var(--primar-border);
+    border-radius: var(--primar-radius-sm);
+    font-size: 1rem;
+    transition: var(--primar-transition);
+    background: var(--primar-white);
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primar-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-control::placeholder {
+    color: var(--primar-text-light);
+    opacity: 0.7;
+}
+
+.form-help {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: var(--primar-text-light);
+}
+
+.form-help i {
+    color: var(--primar-info);
+}
+
+.form-error {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: var(--primar-danger);
+    font-weight: 500;
+}
+
+/* Switch personalizado */
+.switch-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: rgba(6, 182, 212, 0.05);
+    border-radius: var(--primar-radius-sm);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--primar-border);
+    transition: var(--primar-transition);
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: var(--primar-transition);
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primar-success);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.switch-label {
+    display: flex;
+    flex-direction: column;
+}
+
+.switch-title {
+    font-weight: 600;
+    color: var(--primar-text);
+    font-size: 1rem;
+}
+
+.switch-description {
+    font-size: 0.85rem;
+    color: var(--primar-text-light);
+    margin-top: 2px;
+}
+
+/* Botones de acción */
+.form-actions {
+    background: var(--primar-secondary);
+    padding: 32px;
+    border-top: 1px solid var(--primar-border);
+}
+
+.actions-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.action-group {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+}
+
+.action-help {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--primar-text-light);
+    padding: 12px;
+    background: rgba(6, 182, 212, 0.1);
+    border-radius: var(--primar-radius-sm);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+.action-help i {
+    color: var(--primar-info);
+}
+
+/* Botones */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    border-radius: var(--primar-radius-sm);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: var(--primar-transition);
+    font-family: inherit;
+}
+
+.btn-lg {
+    padding: 18px 36px;
+    font-size: 1.1rem;
+}
+
+.btn-primary {
+    background: var(--primar-gradient);
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-secondary {
+    background: var(--primar-white);
+    color: var(--primar-text);
+    border: 2px solid var(--primar-border);
+}
+
+.btn-secondary:hover {
+    background: var(--primar-secondary);
+    border-color: var(--primar-primary);
+    color: var(--primar-text);
+    text-decoration: none;
+}
+
+.btn-eye-password {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    color: #64748b;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 2;
+    height: 32px;
+    width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-eye-password:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Responsive */
+@@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .section-content {
+        padding: 24px 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .form-actions {
+        padding: 24px 20px;
+    }
+
+    .action-group {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .btn {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .switch-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+}
+
+@@media (max-width: 480px) {
+    .editar-usuario-container {
+        padding: 0 16px;
+    }
+
+    .page-title {
+        font-size: 1.25rem;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .section-header {
+        padding: 24px 16px;
+    }
+
+    .section-content {
+        padding: 20px 16px;
+    }
+
+    .form-actions {
+        padding: 20px 16px;
+    }
+}
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+    // === VALIDACIÓN Y FORMATEO DE RUT ===
+    function formatearRut(rut) {
+        rut = rut.replace(/[^0-9kK]/g, '').toUpperCase();
+        if (rut.length < 2) return rut;
+        let cuerpo = rut.slice(0, -1);
+        let dv = rut.slice(-1);
+        let cuerpoFormateado = '';
+        let contador = 0;
+        for (let i = cuerpo.length - 1; i >= 0; i--) {
+            cuerpoFormateado = cuerpo[i] + cuerpoFormateado;
+            contador++;
+            if (contador === 3 && i !== 0) {
+                cuerpoFormateado = '.' + cuerpoFormateado;
+                contador = 0;
+            }
+        }
+        return `${cuerpoFormateado}-${dv}`;
+    }
+    function validarRut(rut) {
+        rut = rut.replace(/[^0-9kK]/g, '').toUpperCase();
+        if (rut.length < 2) return false;
+        let cuerpo = rut.slice(0, -1);
+        let dv = rut.slice(-1);
+        let suma = 0, multiplo = 2;
+        for (let i = cuerpo.length - 1; i >= 0; i--) {
+            suma += parseInt(cuerpo[i]) * multiplo;
+            multiplo = multiplo === 7 ? 2 : multiplo + 1;
+        }
+        let dvEsperado = 11 - (suma % 11);
+        let dvCalc = dvEsperado === 11 ? '0' : dvEsperado === 10 ? 'K' : dvEsperado.toString();
+        return dv === dvCalc;
+    }
+    // === VALIDACIÓN Y FORMATEO DE TELÉFONO ===
+    function formatearTelefono(telefono) {
+        let t = telefono.replace(/\D/g, '');
+        // Chile
+        if (t.length === 9 && t.startsWith('9')) return `+56 9 ${t.slice(1,5)} ${t.slice(5,9)}`;
+        // Argentina
+        if (t.length === 10 && t.startsWith('11')) return `+54 9 11 ${t.slice(2,6)} ${t.slice(6,10)}`;
+        // Perú
+        if (t.length === 9 && t.startsWith('9')) return `+51 9 ${t.slice(1,5)} ${t.slice(5,9)}`;
+        return telefono;
+    }
+    function validarTelefono(telefono, pais) {
+        let t = telefono.replace(/\D/g, '');
+        if (pais === 'cl') {
+            // Chile: 9 dígitos, empieza con 9
+            if (t.length > 9) t = t.slice(-9);
+            return t.length === 9 && t[0] === '9';
+        }
+        if (pais === 'ar') {
+            // Argentina: 10 dígitos, empieza con 11
+            if (t.length > 10) t = t.slice(-10);
+            return t.length === 10 && t.startsWith('11');
+        }
+        if (pais === 'pe') {
+            // Perú: 9 dígitos, empieza con 9
+            if (t.length > 9) t = t.slice(-9);
+            return t.length === 9 && t[0] === '9';
+        }
+        return false;
+    }
+    function togglePasswordEdit() {
+        var pwd = document.getElementById('passwordField');
+        var eye = document.getElementById('eyeIcon');
+        // Si está readonly, lo quitamos, limpiamos y ponemos en modo password
+        if (pwd.hasAttribute('readonly')) {
+            pwd.removeAttribute('readonly');
+            pwd.value = '';
+            pwd.type = 'password';
+            pwd.focus();
+            eye.classList.remove('fa-eye');
+            eye.classList.add('fa-eye-slash');
+            return;
+        }
+        // Si ya es editable, alternamos entre mostrar/ocultar
+        if (pwd.type === 'password') {
+            pwd.type = 'text';
+            eye.classList.remove('fa-eye-slash');
+            eye.classList.add('fa-eye');
+        } else {
+            pwd.type = 'password';
+            eye.classList.remove('fa-eye');
+            eye.classList.add('fa-eye-slash');
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const rutInput = document.querySelector('input[name="Rut"]');
+        const rutError = rutInput.nextElementSibling;
+        rutInput.addEventListener('input', function() {
+            this.value = formatearRut(this.value);
+            if (this.value.length > 0 && !validarRut(this.value)) {
+                rutError.textContent = 'RUT inválido. Verifica el dígito verificador.';
+            } else {
+                rutError.textContent = '';
+            }
+        });
+        const telInput = document.querySelector('input[name="Telefono"]');
+        const telError = telInput.nextElementSibling;
+        const paisSelect = document.getElementById('paisTelefono');
+        paisSelect.addEventListener('change', function() {
+            const pais = this.value;
+            telInput.placeholder = `Ej: +${pais} 9 1234 5678`;
+            telInput.value = formatearTelefono(telInput.value); // Reformatar el teléfono al cambiar el país
+            if (telInput.value.length > 0 && !validarTelefono(telInput.value, pais)) {
+                telError.textContent = 'Teléfono no válido para el país seleccionado.';
+            } else {
+                telError.textContent = '';
+            }
+        });
+        // Validación al enviar
+        const form = document.querySelector('.user-form');
+        form.addEventListener('submit', function(e) {
+            let valido = true;
+            // Validar RUT
+            if (rutInput.value.trim().length === 0 || !validarRut(rutInput.value)) {
+                rutError.textContent = 'RUT inválido. Verifica el dígito verificador.';
+                valido = false;
+                console.log('RUT inválido:', rutInput.value);
+            } else {
+                rutError.textContent = '';
+            }
+            // Validar Teléfono según país
+            const pais = paisSelect.value;
+            if (telInput.value.trim().length === 0 || !validarTelefono(telInput.value, pais)) {
+                telError.textContent = 'Teléfono no válido para el país seleccionado.';
+                valido = false;
+                console.log('Teléfono inválido:', telInput.value, 'País:', pais);
+            } else {
+                telError.textContent = '';
+            }
+            if (!valido) {
+                e.preventDefault();
+                console.log('Formulario bloqueado por validación');
+            } else {
+                console.log('Formulario enviado');
+            }
+        });
+    });
+    </script>
+}
